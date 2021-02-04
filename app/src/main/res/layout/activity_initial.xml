@@ -3,13 +3,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-
     tools:context=".Initial"
     android:background="#F6F6F6"
     android:id="@+id/cover">
 
 
-    <ImageView
+    <View
         android:id="@+id/charco_phot"
         android:layout_width="match_parent"
         android:layout_height="413dp"

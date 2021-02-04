@@ -2,4 +2,10 @@
     <string name="app_name">PictureWithAI</string>
 
     <string name="photo_with_">Photo with AI</string>
+
+    <string name="selecting_p">selecting photo \nwith AI</string>
+
+    <string name="taking_a_ph">taking a photo \nwith AI</string>
+
+    <string name="my_album">MY ALBUM</string>
 </resources>
