@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PictureWithAI</string>
+
+    <string name="photo_with_">Photo with AI</string>
 </resources>
