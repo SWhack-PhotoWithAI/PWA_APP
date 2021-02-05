@@ -44,37 +44,40 @@ def main():
     #예시(여기가 카메라-> frame (이미지) 로드 해서 동작)
     # img = Image.open('./ho.jpg')
     imgDir_path = 'images/'
-    img_path = get_image_list(imgDir_path)[0]
-    print('img_path : {}'.format(img_path))
-    img = Image.open(img_path)
-
-    #텐서로 변환
-    trf = T.Compose([
-        T.ToTensor()
-    ])
-
-    input_img = trf(img)
-    out = model([input_img])[0]
-
-    #사진의 최종 점수
-    img_score = 0
-
-
-    for box, score, keypoints,keypoints_scores in zip(out['boxes'], out['scores'], out['keypoints'],out['keypoints_scores']):
-        score = score.detach().numpy()
-        
-        if score < THRESHOLD:
-            continue
-        
-        keypoints_scores  = keypoints_scores.detach().numpy()
-        #print(keypoints_scores)
-        for i in range(len(keypoints_scores)):
-          img_score += keypoints_scores[i]
-
-    print('removed image : {}'.format(img_path))
-    os.remove(img_path)
-    print("img_score : ",img_score)
     _dict = {}
-    _dict['score'] = img_score
+
+    for img_path in get_image_list(imgDir_path):
+      print('img_path : {}'.format(img_path))
+      img = Image.open(img_path)
+
+      #텐서로 변환
+      trf = T.Compose([
+          T.ToTensor()
+      ])
+
+      input_img = trf(img)
+      out = model([input_img])[0]
+
+      #사진의 최종 점수
+      img_score = 0
+
+
+      for box, score, keypoints,keypoints_scores in zip(out['boxes'], out['scores'], out['keypoints'],out['keypoints_scores']):
+          score = score.detach().numpy()
+          
+          if score < THRESHOLD:
+              continue
+          
+          keypoints_scores  = keypoints_scores.detach().numpy()
+          #print(keypoints_scores)
+          for i in range(len(keypoints_scores)):
+            img_score += keypoints_scores[i]
+
+      print('removed image : {}'.format(img_path))
+      os.remove(img_path)
+      print("img_score : ",img_score)
+      
+      _dict[img_path] = img_score
+      
     return _dict
 
