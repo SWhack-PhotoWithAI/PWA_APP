@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
@@ -127,6 +128,11 @@ public class MainActivity extends AppCompatActivity {
 
 
         Call<ResponseBody> call = serviceInterface.uploadNewsFeedImages(list);
+
+        ProgressBar progress = (ProgressBar) findViewById(R.id.progress) ;
+        progress.setVisibility(View.VISIBLE);
+
+
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -139,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                     ResponseBody addMediaModel = response.body();
 
                     System.out.println(response.body().string());
-
+                    progress.setVisibility(View.GONE);
 
                 }
                 catch (Exception e){
