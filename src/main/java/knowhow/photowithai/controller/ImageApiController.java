@@ -22,7 +22,11 @@ import java.util.List;
 
 @Controller
 public class ImageApiController {
-
+    @GetMapping("/")
+    @ResponseBody
+    String home() {
+        return "home page";
+    }
 //    @GetMapping("/filter")
 //    public String filterImage() {
 //        return "filter";
@@ -42,7 +46,7 @@ public class ImageApiController {
 //        System.out.println(response.getBody());
 
 
-        //        String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
+    //        String rootPath = FileSystemView.getFileSystemView().getHomeDirectory().toString();
 //        String basePath = rootPath + "/" + "images";
 //        File Folder = new File(basePath);
 //        if (!Folder.exists()) {
