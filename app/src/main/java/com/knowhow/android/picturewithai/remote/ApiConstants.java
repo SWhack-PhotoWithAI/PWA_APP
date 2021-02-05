@@ -9,7 +9,7 @@ public class ApiConstants {
     public static String BASE_URL = "https://test-photo-with-ai.herokuapp.com/";
 
     //==== End point
-    public static final String ENDPOINT = "/Intuenty/staging/api/user/";
+
 
     //===== Retrofit Client
     private static Retrofit retrofit = null;

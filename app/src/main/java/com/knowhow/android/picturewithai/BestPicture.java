@@ -1,53 +1,82 @@
 package com.knowhow.android.picturewithai;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 
+import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+
+import java.io.File;
 
 public class BestPicture extends AppCompatActivity {
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //타이틀바 없애기
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_best_picture);
 
+        if(getIntent().getExtras() != null){
+
+            ImageView view = findViewById(R.id.bestPicture);
+            Intent signupIntent = getIntent();
+
+            String path=signupIntent.getStringExtra("path");
+
+            view.setImageBitmap(BitmapFactory.decodeFile(path));
 
 
-        //데이터 가져오기
-        Intent intent = getIntent();
-        String data = intent.getStringExtra("data");
+            ImageButton button = findViewById(R.id.btn);
 
-    }
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
 
-    //확인 버튼 클릭
-    public void mOnClose(View v){
-        //데이터 전달하기
-        Intent intent = new Intent();
-        intent.putExtra("result", "Close Popup");
-        setResult(RESULT_OK, intent);
+                    Uri uri = getUriFromPath(path);
 
-        //액티비티(팝업) 닫기
-        finish();
-    }
+                    intent.setType("image/*");
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        //바깥레이어 클릭시 안닫히게
-        if(event.getAction()==MotionEvent.ACTION_OUTSIDE){
-            return false;
+                    intent.putExtra(Intent.EXTRA_STREAM, uri);
+
+                    Intent Sharing = Intent.createChooser(intent, "Share to");
+                    startActivity(Sharing);
+                }
+            });
         }
-        return true;
     }
 
-    @Override
-    public void onBackPressed() {
-        //안드로이드 백버튼 막기
-        return;
+    private Uri getUriFromPath(String filePath) {
+        long photoId;
+        Uri photoUri = MediaStore.Images.Media.getContentUri("external");
+        String[] projection = {MediaStore.Images.ImageColumns._ID};
+        Cursor cursor = getContentResolver().query(photoUri, projection, MediaStore.Images.ImageColumns.DATA + " LIKE ?", new String[] { filePath }, null);
+        cursor.moveToFirst();
+
+        int columnIndex = cursor.getColumnIndex(projection[0]);
+        photoId = cursor.getLong(columnIndex);
+
+        cursor.close();
+        return Uri.parse(photoUri.toString() + "/" + photoId);
     }
+
 }
+
+
+
+

@@ -14,9 +14,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PictureWithAI">
-        <activity android:name=".SelectCategory"></activity>
-        <activity android:name=".BestPicture"></activity>
+        android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity android:name=".SelectCategory" />
+        <activity android:name=".BestPicture" />
         <activity android:name=".TakePicture" />
         <activity android:name=".Initial">
             <intent-filter>
