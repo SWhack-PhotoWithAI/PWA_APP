@@ -53,4 +53,40 @@
 
     
     
+# 2/5 pm 11:00
+
+### 작업 진행상황
+    * AI 
+        1) 이미지 분석 알고리즘 구현 완료, pytorch -> Java 코드 변환작업 중
+        2) NIMA Model Flask 서버에 배포 완료 -> 적용할 수 있도록 NIMA 알고리즘 수정 중
+        
+    * Android
+        1) UI 작업 완료(디자인 수정 제외)
+        2) 사용자가 pick 한 사진들 중 BEST 뽑아주는 기능 구현 완료
+        3) 실시간 카메라로 사용자의 자세를 잡아주는 모델 안드로이드에서 사용할 수 있도록 개발 중
+        
+    * Backend
+        1) Rest API 구축하여 프론트와 서버에서 GET 호출 가능한 상태
+        2) 이미지에 필터 효과를 입힐 수 있는 기능 Open API 사용하여 개발 중
+        
+    *  Design
+        1) 기타 디자인 수정완료
+        2) BEST PICK, AI CAMERA(+guide message) 작업 중 
+   ![image](https://user-images.githubusercontent.com/50574738/107045681-21714d80-6809-11eb-9831-a29f6120363e.png)
+   
+   
+   
+# 2/5 am 04:00
+
+### 작업 진행상황
+    *  AI
+    
+    * Android 
+    * BE
+
+
+### 발표자료 
+    * 시연영상
+    *
+    *
     
