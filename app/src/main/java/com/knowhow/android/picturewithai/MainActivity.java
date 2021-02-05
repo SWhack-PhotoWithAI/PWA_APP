@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     HerokuService service;
     ServiceInterface serviceInterface;
     List<Uri> files = new ArrayList<>();
-
+    Dialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,14 +82,16 @@ public class MainActivity extends AppCompatActivity {
         selectimage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
-//                    return;
-                } else {
-                    launchGalleryIntent();
-
-                    //initMyAPI(BASE_URL);
-                }
+                Intent intent = new Intent(getApplicationContext(), SelectCategory.class);
+                startActivity(intent);
+//                if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
+////                    return;
+//                } else {
+//                    launchGalleryIntent();
+//
+//                    //initMyAPI(BASE_URL);
+//                }
             }
         });
 
@@ -134,6 +139,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         call.enqueue(new Callback<ResponseBody>() {
+
+
+
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
@@ -146,6 +154,24 @@ public class MainActivity extends AppCompatActivity {
 
                     System.out.println(response.body().string());
                     progress.setVisibility(View.GONE);
+
+                    //Intent intent = new Intent(MainActivity.this, BestPicture.class);
+                    //intent.putExtra("data", "Test Popup");
+                    //startActivity(intent);
+                    //dialog=new Dialog(MainActivity.this);
+                    //dialog.setContentView(R.layout.activity_best_picture);
+
+                    //View bestpicture=findViewById(R.id.best);
+
+
+
+                    File f = new File(String.valueOf(files.get(0)));
+                    Drawable d = Drawable.createFromPath(f.getAbsolutePath());
+                    
+                    Log.d("ii2", f.getAbsolutePath());
+
+                    dialog.show();
+
 
                 }
                 catch (Exception e){
@@ -160,6 +186,17 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("my",t.getMessage());
             }
         });
+    }
+
+    private String getRealPathFromURI(Uri contentURI) {
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            return contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            return cursor.getString(idx);
+        }
     }
 
     @NonNull
@@ -237,7 +274,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_EXTERNAL_STORAGE && resultCode == RESULT_OK) {
 
-            final ImageView imageView = findViewById(R.id.imageview);
+            //final ImageView imageView = findViewById(R.id.imageview);
             final List<Bitmap> bitmaps = new ArrayList<>();
             ClipData clipData = data.getClipData();
 
@@ -286,31 +323,31 @@ public class MainActivity extends AppCompatActivity {
             }
             uploadImages();
 
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for (final Bitmap b : bitmaps) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                imageView.setImageBitmap(b);
-
-                                //uploadImage();
-                                //fileUpload(new File(filePath));
-                                //uploadImage();
-                                //testHeroku();
-
-                            }
-                        });
-
-                        try {
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }).start();
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    for (final Bitmap b : bitmaps) {
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                imageView.setImageBitmap(b);
+//
+//                                //uploadImage();
+//                                //fileUpload(new File(filePath));
+//                                //uploadImage();
+//                                //testHeroku();
+//
+//                            }
+//                        });
+//
+//                        try {
+//                            Thread.sleep(3000);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//            }).start();
         }
     }
 }

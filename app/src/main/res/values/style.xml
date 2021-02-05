@@ -49,4 +49,16 @@
 
     </style>
 
+    <style name="ai_">
+
+        <item name="android:textSize">
+            14sp
+        </item>
+
+        <item name="android:textColor">
+            #151414
+        </item>
+
+    </style>
+
 </resources>

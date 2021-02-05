@@ -8,107 +8,53 @@
     android:background="#F6F6F6"
     android:id="@+id/mainpage">
 
-    <TextView
+    <View
         android:id="@+id/photo_with_"
-        android:layout_width="match_parent"
-        android:layout_height="23dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="131dp"
+        android:background="@drawable/mainmenutitle"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+
+        android:layout_centerInParent="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="65dp"
-        android:text="@string/photo_with_"
-        android:textAppearance="@style/photo_with_"
         android:lineSpacingExtra="2sp"
-        android:gravity="center_vertical"
-        />
+        android:gravity="center_vertical"/>
 
 
     <View
         android:id="@+id/mainmenu1"
-        android:layout_width="117dp"
-        android:layout_height="119dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="43dp"
+        android:layout_width="321dp"
+        android:layout_height="183dp"
+        android:layout_centerInParent="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="127dp"
+
+        android:layout_marginTop="220dp"
+        android:lineSpacingExtra="2sp"
         android:background="@drawable/mainmenu1"
         />
 
 
+
+
     <View
         android:id="@+id/mainmenu2"
-        android:layout_width="117dp"
-        android:layout_height="119dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="43dp"
+        android:layout_width="321dp"
+        android:layout_height="183dp"
+        android:layout_centerInParent="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="127dp"
+
+        android:layout_marginTop="420dp"
+        android:lineSpacingExtra="2sp"
         android:background="@drawable/mainmenu2"
         />
 
 
-    <TextView
-        android:id="@+id/selecting_p"
-        android:layout_width="140dp"
-        android:layout_height="46dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="45dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="261dp"
-        android:text="@string/selecting_p"
-        android:textAppearance="@style/selecting_p"
-        android:lineSpacingExtra="0sp"
-        android:gravity="center_vertical"
-        />
-
-    <TextView
-        android:id="@+id/taking_a_ph"
-        android:layout_width="131dp"
-        android:layout_height="46dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="202dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="261dp"
-        android:text="@string/taking_a_ph"
-        android:textAppearance="@style/taking_a_ph"
-        android:lineSpacingExtra="0sp"
-        android:gravity="center_vertical"
-        />
-
-    <View
-        android:id="@+id/mainmenu3"
-        android:layout_width="273dp"
-        android:layout_height="119dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="43dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="200dp"
-        android:background="@drawable/mainmenu3"
-        />
-
-
-    <TextView
-        android:id="@+id/my_album"
-        android:layout_width="263dp"
-        android:layout_height="23dp"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="45dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="550dp"
-        android:text="@string/my_album"
-        android:textAppearance="@style/my_album"
-        android:lineSpacingExtra="0sp"
-        android:gravity="center_horizontal|center_vertical"
-
-        />
 
 
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
 
-        android:id="@+id/imageview"/>
+
+
 
 
     <ProgressBar
@@ -124,3 +70,5 @@
 
 
 </RelativeLayout>
+
+

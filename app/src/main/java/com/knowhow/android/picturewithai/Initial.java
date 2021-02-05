@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class Initial extends AppCompatActivity {
@@ -16,7 +17,7 @@ public class Initial extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_initial);
 
-        LinearLayout app_layer = (LinearLayout) findViewById (R.id.cover);
+        RelativeLayout app_layer = (RelativeLayout) findViewById (R.id.cover);
         app_layer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
