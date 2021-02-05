@@ -33,15 +33,16 @@ public class ApiModel{
 
     //== response data
     public class ResponseData{
-        public List<String> image;
-
-        public List<String> getImage() {
-            return image;
-        }
-
-        public void setImage(List<String> image) {
-            this.image = image;
-        }
+//        public List<String> image;
+//
+//        public List<String> getImage() {
+//            return image;
+//        }
+//
+//        public void setImage(List<String> image) {
+//            this.image = image;
+//        }
+        public String message;
     }
 }
 

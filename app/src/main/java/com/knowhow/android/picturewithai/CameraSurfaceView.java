@@ -36,9 +36,9 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
-        int cameraId=findFrontSideCamera();
+        //int cameraId=findFrontSideCamera();
 
-        camera = Camera.open(cameraId);
+        camera = Camera.open();
 
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -90,22 +90,9 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         }
     }
 
-    private int findFrontSideCamera() {
-        int cameraId=0;
-        Camera.CameraInfo cameraInfo=new Camera.CameraInfo();
-        cameraId=Camera.getNumberOfCameras();
-
-        for(int i=0;i<cameraId;i++){
-
-            Camera.getCameraInfo(i, cameraInfo);
-
-            if(cameraInfo.facing==Camera.CameraInfo.CAMERA_FACING_FRONT){
-                cameraId=i;
-                break;
-            }
-        }
-        return cameraId;
-    }
+//    private int findFrontSideCamera() {
+//
+//    }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {

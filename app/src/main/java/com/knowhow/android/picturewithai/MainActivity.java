@@ -126,22 +126,20 @@ public class MainActivity extends AppCompatActivity {
         serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
 
 
-        Call<ApiModel> call = serviceInterface.uploadNewsFeedImages(list);
-        call.enqueue(new Callback<ApiModel>() {
+        Call<ResponseBody> call = serviceInterface.uploadNewsFeedImages(list);
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Call<ApiModel> call, Response<ApiModel> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
                 System.out.println("hello");
                 System.out.println(response.code());
                 try {
+                    Log.i("hh", String.valueOf(response));
 
-                    ApiModel addMediaModel = response.body();
-                    if(addMediaModel.getStatusCode().equals("200")){
-                        Toast.makeText(MainActivity.this, "Files uploaded successfuly", Toast.LENGTH_SHORT).show();
-                    }
+                    ResponseBody addMediaModel = response.body();
 
-                    Log.e("main", "the status is ----> " + addMediaModel.getStatusCode());
-                    Log.e("main", "the message is ----> " + addMediaModel.getStatusMessage());
+                    System.out.println(response.body().string());
+
 
                 }
                 catch (Exception e){
@@ -151,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<ApiModel> call, Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
 
                 Log.i("my",t.getMessage());
             }
