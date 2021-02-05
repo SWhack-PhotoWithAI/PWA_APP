@@ -28,11 +28,11 @@ public class FilterImageService {
         File dest = new File(filePath);
         file.transferTo(dest);
 
-        Unirest.setTimeouts(0, 0);
-        HttpResponse<String> response = Unirest.post("https://master-white-box-cartoonization-psi1104.endpoint.ainize.ai/predict")
-                .field("file", file)
-                .field("file_type", "image")
-                .asString();
-        return response.getBody();
+//        Unirest.setTimeouts(0, 0);
+//        HttpResponse<String> response = Unirest.post("https://master-white-box-cartoonization-psi1104.endpoint.ainize.ai/predict")
+//                .field("file", file)
+//                .field("file_type", "image")
+//                .asString();
+        return "hello";
     }
 }
