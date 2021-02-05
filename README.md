@@ -35,3 +35,22 @@
 * 각 파트 작업 이어서 진행
 
 
+
+# 2/5 pm 01:00
+
+### 1. 기능 상세화
+    * 기능 1) AI 카메라 (take a photo with AI)
+        - 비율, face detection, foot detection 활용 예정
+    * 기능 2) 사진 셀렉 기능(pick better one with AI)
+        - 풍경/인물 사진 중 선택
+        - 선택한 5장(예)의 사진 중에서 가장 잘 찍은 사진 하나를 추천(like-갤러리 내 기능, 인스타 연동)
+        
+### 2. 작업 진행상황
+
+    * 이미지 연동- get, post 요청하여 body로 내용 넣어서 서버로 이미지 전송 확인
+    * AI: opencv - key point detection in video sequences
+    * 확정된 기능 디자인 수정
+
+    
+    
+    
