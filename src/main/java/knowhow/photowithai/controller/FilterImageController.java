@@ -27,8 +27,8 @@ public class FilterImageController {
     @PostMapping("/filter")
     @ResponseBody
     public String uploadFile(@RequestParam("file") MultipartFile file) throws UnirestException, IOException {
-        String msg = filterImageService.uploadFile(file);
-        System.out.println(msg);
-        return msg;
+//        String msg = filterImageService.uploadFile(file);
+//        System.out.println(msg);
+        return "hello";
     }
 }
