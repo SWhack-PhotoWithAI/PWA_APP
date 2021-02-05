@@ -10,4 +10,6 @@
     <string name="my_album">MY ALBUM</string>
 
     <string name="ai_">내 앨범에서 AI로 사진 고르기</string>
+
+    <string name="base_url">https://5f41c74f7784.ngrok.io/</string>
 </resources>
