@@ -11,8 +11,7 @@ from keras.applications.inception_resnet_v2 import preprocess_input as inception
 
 # backend
 import numpy as np
-import concurrent.futures
-import pymysql
+# import concurrent.futures
 import json
 import random_name
 import os
@@ -64,19 +63,6 @@ def get_image_list(image_dir):
         raise RuntimeError('Either -img_dir arguments must be passed as argument')
 
     return images
-
-# mysql://b0175166f83bfa:a12092fc@us-cdbr-east-03.cleardb.com/heroku_ae6c5127ab540fd
-def get_image_list_db(db_id):
-  
-    db = pymysql.connect(host='us-cdbr-east-03.cleardb.com', user='b0175166f83bfa', password='a12092fc', db='heroku_ae6c5127ab540fd',
-                     charset='utf8')
-    curs = db.cursor()
-    #Select Query
-
-    sql = """select * from TableName"""
-    curs.execute(sql)
-    select = list(curs.fetchall())
-    db.commit()
 
 def set_model(network, weight):
     print("[Build model]")
@@ -147,11 +133,13 @@ def ranking_score(score_list):
 
     return rank_list
 
-def create_json(_dict):
+def create_json(_dict_list):
     file_data = OrderedDict()
     
-    for _key, _val in _dict.items():
-        file_data[_key] = _val
+    for i in range(len(_dict_list)):
+      _dict = _dict_list[i]
+      for _key, _val in _dict.items():
+          file_data[str(i)] = _dict
     
     file_name = random_name.generate(1)[0] + '.json'
 
@@ -168,6 +156,7 @@ if __name__ == "__main__":
     model = set_model(config['network'], config['weight'])
 
     images = get_image_list(config['img_dir'])
+    # images = get_image_list_db(config['img_dir'])
     print ("Number of testing examples : " + str(len(images)))
     
     # while True:
@@ -181,12 +170,13 @@ if __name__ == "__main__":
     score_list = prediction_score(model, config['network'], images, config['target_size'])
     rank_list = ranking_score(score_list)
     print('best : {}'.format(rank_list[0]))
-    _dict = {}
-
-    _dict['name'] = rank_list[0][0]
-    _dict['mean'] = rank_list[0][1]
-    _dict['std'] = rank_list[0][2]
-    print(_dict)
-    create_json(_dict)
+    _dict_list = []
+    for _rank in rank_list:
+      _dict = {}
+      _dict['name'] = _rank[0]
+      _dict['score'] = _rank[1]
+      _dict_list.append(_dict)
+      print(_dict)
+    create_json(_dict_list)
     #image_id, score
     
