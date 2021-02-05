@@ -90,6 +90,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        View takePicture = findViewById(R.id.mainmenu2);
+
+        takePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), TakePicture.class);
+                startActivity(intent);
+            }
+        });
+
+
 
 
 
