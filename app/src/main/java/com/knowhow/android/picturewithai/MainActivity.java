@@ -1,11 +1,13 @@
 package com.knowhow.android.picturewithai;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -22,7 +24,11 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.knowhow.android.picturewithai.R;
+import com.knowhow.android.picturewithai.model.ApiModel;
+import com.knowhow.android.picturewithai.remote.ApiConstants;
+import com.knowhow.android.picturewithai.remote.ServiceInterface;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -42,14 +48,17 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import com.knowhow.android.picturewithai.utils.FileUtil;
+
+
 public class MainActivity extends AppCompatActivity {
 
     final int REQUEST_EXTERNAL_STORAGE = 100;
-    String filePath="/document/image:34";
-    HerokuService service;
 
-    //private final String BASE_URL = "http://127.0.0.1:8000";
-    //private MyAPI mMyAPI;
+    HerokuService service;
+    ServiceInterface serviceInterface;
+    List<Uri> files = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,98 +96,72 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void uploadMultipleImage() {
-        MultipartBody.Part image1 = prepareImagePart(filePath, "image1");
-        MultipartBody.Part image2 = prepareImagePart(filePath, "image2");
 
-        Retrofit retrofit = NetworkClient.getRetrofit();
-        UploadApis uploadApis = retrofit.create(UploadApis.class);
-        Call<ResponseBody> uploader= uploadApis.uploadMultiImage(image1, image2);
-        uploader.enqueue(new Callback<ResponseBody>() {
+
+    //===== Upload files to server
+    public void uploadImages(){
+
+
+
+        List<MultipartBody.Part> list = new ArrayList<>();
+
+        for (Uri uri:files) {
+
+            Log.i("uris",uri.getPath());
+
+            list.add(prepareFilePart("file", uri));
+        }
+
+        serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
+
+
+        Call<ApiModel> call = serviceInterface.uploadNewsFeedImages(list);
+        call.enqueue(new Callback<ApiModel>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                System.out.println("hello2");
+            public void onResponse(Call<ApiModel> call, Response<ApiModel> response) {
+
+                System.out.println("hello");
                 System.out.println(response.code());
+                try {
+
+                    ApiModel addMediaModel = response.body();
+                    if(addMediaModel.getStatusCode().equals("200")){
+                        Toast.makeText(MainActivity.this, "Files uploaded successfuly", Toast.LENGTH_SHORT).show();
+                    }
+
+                    Log.e("main", "the status is ----> " + addMediaModel.getStatusCode());
+                    Log.e("main", "the message is ----> " + addMediaModel.getStatusMessage());
+
+                }
+                catch (Exception e){
+                    Log.d("Exception","|=>"+e.getMessage());
+//
+                }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                System.out.println("good");
+            public void onFailure(Call<ApiModel> call, Throwable t) {
+
+                Log.i("my",t.getMessage());
             }
         });
-
-
     }
 
-    private MultipartBody.Part prepareImagePart(String path, String partName){
-        File file = new File(path);
-        RequestBody requestBody = RequestBody.create(MediaType.parse(getContentResolver().getType(Uri.fromFile(file))), file);
-        return MultipartBody.Part.createFormData(partName, file.getName(), requestBody);
-    }
+    @NonNull
+    private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
 
-    private String getRealPathFromURI(Uri contentURI) {
-        String result; Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) {
-            // Source is Dropbox or other similar local file path
-            result = contentURI.getPath(); }
-        else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx); cursor.close();
-        } return result;
-    }
+        File file = new File(fileUri.getPath());
+        Log.i("here is error",file.getAbsolutePath());
+        // create RequestBody instance from file
 
-//    private void initMyAPI(String baseUrl){
-//
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(baseUrl)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//        mMyAPI = retrofit.create(MyAPI.class);
-//
-//        Call<List<PostItem>> getCall = mMyAPI.get_posts();
-//        getCall.enqueue(new Callback() {
-//
-//            @Override
-//            public void onResponse(Call call, retrofit2.Response response) {
-//
-//            }
-//
-//            @Override
-//            public void onFailure(Call call, Throwable t)  {
-//
-//            }
-//
-//
-//        });
-//    }
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("image/*"),
+                        file);
 
-    private void uploadImage() {
-        File file = new File(filePath);
-        RequestBody requestBody = RequestBody.create(MediaType.parse("image/*"), file);
-        MultipartBody.Part parts = MultipartBody.Part.createFormData("newimage", file.getName(), requestBody);
+        // MultipartBody.Part is used to send also the actual file name
+        return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
 
-        RequestBody someData = RequestBody.create(MediaType.parse("text/plain"), "This is a new Image");
-
-        Retrofit retrofit = NetworkClient.getRetrofit();
-
-        UploadApis uploadApis = retrofit.create(UploadApis.class);
-        Call call = uploadApis.uploadImage(parts, someData);
-        call.enqueue(new Callback() {
-
-            @Override
-            public void onResponse(Call call, retrofit2.Response response) {
-                System.out.println("hello2");
-                System.out.println(response.code());
-            }
-
-            @Override
-            public void onFailure(Call call, Throwable t)  {
-                System.out.println("good");
-            }
-
-
-        });
 
     }
 
@@ -208,46 +191,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public static void fileUpload (File file) {
 
-
-
-        RequestBody requestBody;
-        MultipartBody.Part body;
-        LinkedHashMap<String, RequestBody> mapRequestBody = new LinkedHashMap<String, RequestBody>();
-        List<MultipartBody.Part> arrBody = new ArrayList<>();
-
-
-        requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        mapRequestBody.put("file\"; filename=\"" + file.getName(), requestBody);
-        mapRequestBody.put("test", RequestBody.create(MediaType.parse("text/plain"), "gogogogogogogog"));
-
-
-        body = MultipartBody.Part.createFormData("fileName", file.getName(), requestBody);
-        arrBody.add(body);
-
-
-        Call<JsonObject> call = RetrofitImg.getInstance().getService().uploadFile(mapRequestBody, arrBody);
-
-        call.enqueue(new Callback<JsonObject>() {
-            @Override
-            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
-
-                if (response.body() != null) {
-
-                }
-                System.out.println("hello");
-                System.out.println(response.code());
-            }
-
-            @Override
-            public void onFailure(Call<JsonObject> call, Throwable t) {
-                System.out.println("goodH");
-            }
-        });
-
-
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -285,27 +229,39 @@ public class MainActivity extends AppCompatActivity {
             if (clipData != null) {
                 //multiple images selecetd
                 for (int i = 0; i < clipData.getItemCount(); i++) {
-                    Uri imageUri = clipData.getItemAt(i).getUri();
-                    filePath= imageUri.getPath();
-                    System.out.println(filePath);
+                    Uri img = clipData.getItemAt(i).getUri();
 
-                    Log.d("URI", imageUri.toString());
+
+
+
+                    String imgPath = FileUtil.getPath(MainActivity.this,img);
+
+                    files.add(Uri.parse(imgPath));
+
+
+                    Log.d("URI", img.toString());
                     try {
-                        InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                        InputStream inputStream = getContentResolver().openInputStream(img);
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                         bitmaps.add(bitmap);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
                 }
+
             } else {
                 //single image selected
-                Uri imageUri = data.getData();
-                filePath= imageUri.getPath();
 
-                Log.d("URI", imageUri.toString());
+                Uri img = data.getData();
+
+
+                String imgPath = FileUtil.getPath(MainActivity.this,img);
+
+                files.add(Uri.parse(imgPath));
+
+                //uploadImages();
                 try {
-                    InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                    InputStream inputStream = getContentResolver().openInputStream(img);
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     bitmaps.add(bitmap);
                 } catch (FileNotFoundException e) {
@@ -313,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
             }
+            uploadImages();
 
             new Thread(new Runnable() {
                 @Override
@@ -322,11 +279,11 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 imageView.setImageBitmap(b);
-                                Toast.makeText(getApplicationContext(), filePath, Toast.LENGTH_LONG).show();
+
                                 //uploadImage();
                                 //fileUpload(new File(filePath));
                                 //uploadImage();
-                                testHeroku();
+                                //testHeroku();
 
                             }
                         });
