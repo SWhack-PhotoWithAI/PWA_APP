@@ -1,6 +1,22 @@
 # PWA_APP
 
-# 개발일지
+ ### 핵심기능
+
+    기능 1) 사진 구도 가이드 -> 미완성 
+    기능 2) 비슷한 여러 사진들 중 가장 잘 찍은 사진을 선택해줌 
+            2.1) 배경 사진 -> 완성
+            2.2) 인물 사진 -> 완성
+
+### 사용한 AI 모델(pretrained)
+    * 사진 구도 가이드 -> keypointrcnn_resnet50_fpn
+    * 인물 중심 평가 -> keypointrcnn_resnet50_fpn
+    * 배경 중심 평가 -> NIMA: Neural IMage Assessment
+       
+
+
+* 개발일지
+ 
+ 
 
 # 2/5 am 01:00
 
