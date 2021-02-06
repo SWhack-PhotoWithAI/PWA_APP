@@ -5,57 +5,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SelectCategory"
-    android:background="#F6F6F6">
-
-    <TextView
-        android:id="@+id/ai_"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_alignParentTop="true"
-
-        android:layout_marginTop="50dp"
-        android:text="@string/ai_"
-        android:textAppearance="@style/ai_"
-        android:lineSpacingExtra="6sp"
-        android:textSize="20sp"
-        android:gravity="center_horizontal|center_vertical"
-        />
-
-
-
-
+    android:background="#F6F6F6"
+    android:backgroundTint="#FFFDE1">
     <View
-        android:id="@+id/personImage"
-        android:layout_width="167dp"
-        android:layout_height="204dp"
+        android:id="@+id/ai_"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/categorytitle" />
+    <View
+        android:id="@+id/info"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="290dp"
+        android:layout_marginTop="152dp"
+        android:background="@drawable/info" />
+    <View
+        android:id="@+id/bestalbum"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
         android:layout_alignParentTop="true"
         android:layout_marginTop="150dp"
-        android:background="@drawable/pickmenu1"
-        />
-
-
-
+        android:layout_marginStart="320dp"
+        android:background="@drawable/album" />
+    <View
+        android:id="@+id/personImage"
+        android:layout_width="276dp"
+        android:layout_height="220dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="200dp"
+        android:background="@drawable/pickmenu1" />
     <View
         android:id="@+id/sightImage"
-        android:layout_width="169dp"
-        android:layout_height="202dp"
-        android:layout_centerInParent="true"
+        android:layout_width="276dp"
+        android:layout_height="220dp"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="400dp"
-        android:background="@drawable/pickmenu2"
-        />
-
-
-
-
-
-
-
-
-
-
+        android:layout_centerInParent="true"
+        android:layout_marginTop="450dp"
+        android:background="@drawable/pickmenu2" />
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="100dp"
@@ -63,11 +54,4 @@
         android:layout_centerInParent="true"
         android:visibility="gone"
         />
-
-
-
-
-
 </RelativeLayout>
-
-
