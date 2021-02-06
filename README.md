@@ -11,6 +11,12 @@
     * 사진 구도 가이드 -> keypointrcnn_resnet50_fpn
     * 인물 중심 평가 -> keypointrcnn_resnet50_fpn
     * 배경 중심 평가 -> NIMA: Neural IMage Assessment
+    
+### Branch 설명
+    * main -> 안드로이드 구현
+    * A_1 -> AI모델 튜닝 및 알고리즘 구현
+    * A_2 -> Flask활용 서버로 부터 데이터 받아 코드 실행.
+    * backend -> Backend서버
        
 
 
