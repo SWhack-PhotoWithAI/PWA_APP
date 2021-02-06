@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">PictureWithAI</string>
+
+    <string name="photo_with_">Photo with AI</string>
+
+    <string name="selecting_p">selecting photo \nwith AI</string>
+
+    <string name="taking_a_ph">taking a photo \nwith AI</string>
+
+    <string name="my_album">MY ALBUM</string>
+
+    <string name="ai_">내 앨범에서 AI로 사진 고르기</string>
+
+    <string name="base_url">https://32ab3156c6a0.ngrok.io/</string>
+</resources>
