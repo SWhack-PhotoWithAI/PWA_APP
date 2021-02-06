@@ -6,57 +6,38 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="#F6F6F6"
-    android:id="@+id/mainpage">
-
-    <View
-        android:id="@+id/photo_with_"
-        android:background="@drawable/mainmenutitle"
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-
-        android:layout_centerInParent="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="65dp"
-        android:lineSpacingExtra="2sp"
-        android:gravity="center_vertical"/>
-
-
+    android:id="@+id/mainpage"
+    android:backgroundTint="#FFFDE1">
     <View
         android:id="@+id/mainmenu1"
-        android:layout_width="321dp"
-        android:layout_height="183dp"
+        android:layout_width="264dp"
+        android:layout_height="180dp"
         android:layout_centerInParent="true"
         android:layout_alignParentTop="true"
-
-        android:layout_marginTop="220dp"
+        android:layout_marginTop="100dp"
         android:lineSpacingExtra="2sp"
         android:background="@drawable/mainmenu1"
         />
-
-
-
-
     <View
         android:id="@+id/mainmenu2"
-        android:layout_width="321dp"
-        android:layout_height="183dp"
+        android:layout_width="264dp"
+        android:layout_height="180dp"
         android:layout_centerInParent="true"
         android:layout_alignParentTop="true"
-
-        android:layout_marginTop="420dp"
+        android:layout_marginTop="300dp"
         android:lineSpacingExtra="2sp"
         android:background="@drawable/mainmenu2"
         />
-
-
-
-
-
-
-
-
-
-
+    <View
+        android:id="@+id/mainmenu3"
+        android:layout_width="264dp"
+        android:layout_height="180dp"
+        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="500dp"
+        android:lineSpacingExtra="2sp"
+        android:background="@drawable/mainmenu3"
+        />
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="100dp"
@@ -64,11 +45,4 @@
         android:layout_centerInParent="true"
         android:visibility="gone"
         />
-
-
-
-
-
 </RelativeLayout>
-
-

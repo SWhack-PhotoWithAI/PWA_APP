@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -71,7 +72,7 @@ public class TakePicture extends AppCompatActivity{
     private static final int PERMISSIONS_REQUEST_CAMERA = 0;
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 0;
     private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 0;
-    private Button button_check, button_capture;
+    private ImageButton button_check, button_capture;
     private Bitmap nowBitmap=null;
 
     final int REQUEST_EXTERNAL_STORAGE = 100;
@@ -111,19 +112,19 @@ public class TakePicture extends AppCompatActivity{
 
         cameraSurfaceView = findViewById(R.id.camera_preview);
 
-        button_check = findViewById(R.id.button1);
+//        button_check = findViewById(R.id.button1);
+//
+//
+//
+//        button_check.setOnClickListener(new Button.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                nowFrame();
+//
+//            }
+//        });
 
-
-
-        button_check.setOnClickListener(new Button.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nowFrame();
-
-            }
-        });
-
-        button_capture = findViewById(R.id.button2);
+        button_capture = findViewById(R.id.button);
 
         button_capture.setOnClickListener(new Button.OnClickListener() {
             @Override
