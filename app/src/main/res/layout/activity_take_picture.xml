@@ -8,10 +8,6 @@
     android:orientation="vertical">
 
 
-
-
-
-
         <com.knowhow.android.picturewithai.CameraSurfaceView
             android:id="@+id/camera_preview"
             android:layout_width="match_parent"
@@ -20,13 +16,26 @@
 
 
         <Button
-            android:id="@+id/button"
+            android:id="@+id/button1"
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="45dp"
             android:layout_alignParentTop="true"
-            android:text="Button"
+            android:text="검"
+            android:gravity="center_horizontal|center_vertical"
+            />
+
+
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="45dp"
+            android:layout_alignParentTop="true"
+            android:text="촬영"
             android:gravity="center_horizontal|center_vertical"
             />
 

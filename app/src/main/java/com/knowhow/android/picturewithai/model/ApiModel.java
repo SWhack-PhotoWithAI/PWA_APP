@@ -1,5 +1,7 @@
 package com.knowhow.android.picturewithai.model;
 
+import com.google.gson.JsonObject;
+
 import java.util.List;
 
 public class ApiModel{
@@ -42,7 +44,7 @@ public class ApiModel{
 //        public void setImage(List<String> image) {
 //            this.image = image;
 //        }
-        public String message;
+        public String result;
     }
 }
 

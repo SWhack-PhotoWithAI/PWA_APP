@@ -39,7 +39,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.google.code.gson:gson:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'org.pytorch:pytorch_android:1.4.0'
-    implementation 'org.pytorch:pytorch_android_torchvision:1.4.0'
+    implementation 'org.pytorch:pytorch_android:1.7.0'
+    implementation 'org.pytorch:pytorch_android_torchvision:1.7.0'
 
 }

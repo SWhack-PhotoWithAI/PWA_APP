@@ -26,7 +26,11 @@ import retrofit2.http.Part;
 public interface ServiceInterface {
 
     @Multipart
-    @POST("upload")
-    Call<ResponseBody> uploadNewsFeedImages(@Part List<MultipartBody.Part> files);
+    @POST("predict_background")
+    Call<ResponseBody> predictBackground(@Part List<MultipartBody.Part> files);
+
+    @Multipart
+    @POST("predict_person")
+    Call<ResponseBody> predictPerson(@Part List<MultipartBody.Part> files);
 }
 

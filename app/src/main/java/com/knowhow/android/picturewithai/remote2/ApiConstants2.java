@@ -1,9 +1,9 @@
-package com.knowhow.android.picturewithai.remote;
+package com.knowhow.android.picturewithai.remote2;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiConstants {
+public class ApiConstants2 {
 
     //==== Base Url
     public static String BASE_URL = "https://ae2cb7a366f7.ngrok.io/";

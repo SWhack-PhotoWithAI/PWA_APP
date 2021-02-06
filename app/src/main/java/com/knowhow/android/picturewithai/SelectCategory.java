@@ -23,9 +23,12 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
 import com.knowhow.android.picturewithai.remote.ApiConstants;
 import com.knowhow.android.picturewithai.remote.ServiceInterface;
 import com.knowhow.android.picturewithai.utils.FileUtil;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,9 +49,11 @@ public class SelectCategory extends AppCompatActivity {
 
     final int REQUEST_EXTERNAL_STORAGE = 100;
 
-    HerokuService service;
+    //HerokuService service;
     ServiceInterface serviceInterface;
     List<Uri> files = new ArrayList<>();
+
+    public String type="";
 
 
     @Override
@@ -57,11 +62,11 @@ public class SelectCategory extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_select_category);
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://test-photo-with-ai.herokuapp.com/")
-                .build();
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(getString(R.string.base_url))
+//                .build();
 
-        service = retrofit.create(HerokuService.class);
+        //service = retrofit.create(HerokuService.class);
         //uploadImage();
         //uploadMultipleImage();
         View personimage = findViewById(R.id.personImage);
@@ -74,7 +79,7 @@ public class SelectCategory extends AppCompatActivity {
 //                    return;
                 } else {
                     launchGalleryIntent();
-
+                    type="Person";
 
                 }
             }
@@ -91,8 +96,7 @@ public class SelectCategory extends AppCompatActivity {
 //                    return;
                 } else {
                     launchGalleryIntent();
-
-
+                    type="Background";
                 }
             }
         });
@@ -100,25 +104,20 @@ public class SelectCategory extends AppCompatActivity {
 
 
     //===== Upload files to server
-    public void uploadImages(){
-
-
-
+    public void predictPerson(){
+        Log.d("type", "person");
         List<MultipartBody.Part> list = new ArrayList<>();
 
         for (Uri uri:files) {
 
-            Log.i("uris",uri.getPath());
 
-
-
-            list.add(prepareFilePart("file", uri));
+            list.add(prepareFilePart("image", uri));
         }
 
         serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
 
 
-        Call<ResponseBody> call = serviceInterface.uploadNewsFeedImages(list);
+        Call<ResponseBody> call = serviceInterface.predictPerson(list);
 
         ProgressBar progress = (ProgressBar) findViewById(R.id.progress) ;
         progress.setVisibility(View.VISIBLE);
@@ -131,40 +130,23 @@ public class SelectCategory extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                System.out.println("hello");
-                System.out.println(response.code());
+
                 try {
-                    Log.d("nn", String.valueOf(response.code()));
-                    Log.i("hh", String.valueOf(response));
 
                     ResponseBody addMediaModel = response.body();
                     progress.setVisibility(View.GONE);
-//                    System.out.println(response.body().string());
-//
-//                    runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//
-//                                  }
-//                });
 
 
-
-
+                    JSONObject jObject = new JSONObject(response.body().string());
+                    int best_idx= jObject.getInt("index");
 
                     Intent intent = new Intent(SelectCategory.this, BestPicture.class);
-                    intent.putExtra("path", String.valueOf(files.get(0)));
-                    Log.d("files", String.valueOf(files.get(0)));
+                    intent.putExtra("path", String.valueOf(files.get(best_idx)));
+                    Log.d("files", String.valueOf(best_idx));
+                    //int best_idx=Integer.toInteger(response.body().string());
 
 
                     startActivity(intent);
-
-//                    File f = new File(String.valueOf(files.get(0)));
-//                    Drawable d = Drawable.createFromPath(f.getAbsolutePath());
-//
-//                    Log.d("ii2", f.getAbsolutePath());
-
-
 
 
                 }
@@ -172,12 +154,91 @@ public class SelectCategory extends AppCompatActivity {
                     Log.d("Exception","|=>"+e.getMessage());
 //
                 }
+
+
+                files.clear();
+                list.clear();
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-
+                Log.d("testlist", String.valueOf(list.size()));
+                Log.d("testlist", String.valueOf(files.size()));
                 Log.i("my",t.getMessage());
+
+                files.clear();
+                list.clear();
+            }
+        });
+    }
+
+
+
+    //===== Upload files to server
+    public void predictBackground(){
+        Log.d("type", "background");
+        List<MultipartBody.Part> list = new ArrayList<>();
+
+        for (Uri uri:files) {
+
+
+            list.add(prepareFilePart("image", uri));
+        }
+
+        serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
+
+
+        Call<ResponseBody> call = serviceInterface.predictBackground(list);
+
+        ProgressBar progress = (ProgressBar) findViewById(R.id.progress) ;
+        progress.setVisibility(View.VISIBLE);
+
+
+        call.enqueue(new Callback<ResponseBody>() {
+
+
+
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+
+
+                try {
+
+                    ResponseBody addMediaModel = response.body();
+                    progress.setVisibility(View.GONE);
+
+
+                    JSONObject jObject = new JSONObject(response.body().string());
+                    int best_idx= jObject.getInt("index");
+
+                    Intent intent = new Intent(SelectCategory.this, BestPicture.class);
+                    intent.putExtra("path", String.valueOf(files.get(best_idx)));
+                    Log.d("files", String.valueOf(best_idx));
+                    //int best_idx=Integer.toInteger(response.body().string());
+
+
+                    startActivity(intent);
+
+
+                }
+                catch (Exception e){
+                    Log.d("Exception","|=>"+e.getMessage());
+//
+                }
+
+
+                files.clear();
+                list.clear();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("testlist", String.valueOf(list.size()));
+                Log.d("testlist", String.valueOf(files.size()));
+                Log.i("my",t.getMessage());
+
+                files.clear();
+                list.clear();
             }
         });
     }
@@ -210,7 +271,7 @@ public class SelectCategory extends AppCompatActivity {
 
 
     }
-
+    /*
     public void testHeroku(){
         Call<ResponseBody> call = service.hello();
         call.enqueue(new Callback<ResponseBody>() {
@@ -226,10 +287,12 @@ public class SelectCategory extends AppCompatActivity {
             }
         });
     }
+   */
 
     public void launchGalleryIntent() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
         intent.setType("image/*");
         startActivityForResult(intent, REQUEST_EXTERNAL_STORAGE);
     }
@@ -248,7 +311,7 @@ public class SelectCategory extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-                    launchGalleryIntent();
+                    //launchGalleryIntent();
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
@@ -316,7 +379,13 @@ public class SelectCategory extends AppCompatActivity {
                 }
 
             }
-            uploadImages();
+
+            Log.d("typetype", type);
+            if (type.equals("Background")) {
+                predictBackground();
+            }else {
+                predictPerson();
+            }
 
 //            new Thread(new Runnable() {
 //                @Override

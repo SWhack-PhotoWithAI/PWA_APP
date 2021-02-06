@@ -4,13 +4,17 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
 
-public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
+import static android.widget.Toast.LENGTH_LONG;
+
+public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
 
     public SurfaceHolder holder;
     public Camera camera=null;
@@ -36,9 +40,9 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
-        //int cameraId=findFrontSideCamera();
 
-        camera = Camera.open();
+
+        camera = Camera.open(0);
 
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -68,6 +72,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
             camera.setParameters(parameters);
             camera.setPreviewDisplay(holder);
             camera.startPreview();
+            //camera.setPreviewCallback(this);
             //camera.stopFaceDetection();
 
             //startFaceDetection();
@@ -79,20 +84,9 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
 
 
-    public void startFaceDetection(){
-        // Try starting Face Detection
-        Camera.Parameters params = camera.getParameters();
 
-        // start face detection only *after* preview has started
-        if (params.getMaxNumDetectedFaces() > 0){
-            // camera supports face detection, so can start it:
-            camera.startFaceDetection();
-        }
-    }
 
-//    private int findFrontSideCamera() {
-//
-//    }
+
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -114,6 +108,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         try {
             camera.setPreviewDisplay(holder);
             camera.startPreview();
+            //camera.setPreviewCallback(this);
 
             //startFaceDetection(); // re-start face detection feature
 
@@ -140,4 +135,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
             return false;
         }
     }
+
+
+
 }
