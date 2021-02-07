@@ -56,6 +56,8 @@ public class SelectCategory extends AppCompatActivity {
     public String type="";
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,7 +135,7 @@ public class SelectCategory extends AppCompatActivity {
 
                 try {
 
-                    ResponseBody addMediaModel = response.body();
+
                     progress.setVisibility(View.GONE);
 
 
@@ -340,8 +342,6 @@ public class SelectCategory extends AppCompatActivity {
                 //multiple images selecetd
                 for (int i = 0; i < clipData.getItemCount(); i++) {
                     Uri img = clipData.getItemAt(i).getUri();
-
-
 
 
                     String imgPath = FileUtil.getPath(SelectCategory.this,img);

@@ -1,14 +1,24 @@
 package com.knowhow.android.picturewithai;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Toast;
 
+import com.knowhow.android.picturewithai.utils.FileUtil;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -18,22 +28,27 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     public SurfaceHolder holder;
     public Camera camera=null;
+    public Bitmap nowBitmap=null;
+    public Context context;
 
 
     public CameraSurfaceView(Context context) {
         super(context);
         init(context);
+        this.context=context;
     }
 
     public CameraSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
+        this.context=context;
     }
 
 
     private void init(Context context) {
         holder=getHolder();
         holder.addCallback(this);
+        //this.context = context;
     }
 
 
@@ -101,6 +116,12 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
             //startFaceDetection();
 
+
+
+
+
+
+
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -163,6 +184,28 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        Log.d("hh", String.valueOf(data.length));
+
+        Camera.Parameters parameters = camera.getParameters();
+        int width = parameters.getPreviewSize().width;
+        int height = parameters.getPreviewSize().height;
+
+        YuvImage yuv = new YuvImage(data, parameters.getPreviewFormat(), width, height, null);
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        yuv.compressToJpeg(new Rect(0, 0, width, height), 50, out);
+
+        byte[] bytes = out.toByteArray();
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+
+        // We rotate the same Bitmap
+        nowBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+
+
+
+
     }
 }

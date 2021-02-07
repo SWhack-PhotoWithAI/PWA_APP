@@ -13,5 +13,7 @@ public interface ServiceInterface2 {
 
     @Multipart
     @POST("predict_person_rt")
-    Call<ResponseBody> analyzeImages(@Part MultipartBody.Part files);
+    Call<ResponseBody> analyzeImages(@Part MultipartBody.Part file);
+
+
 }

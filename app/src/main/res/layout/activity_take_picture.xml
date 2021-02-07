@@ -9,8 +9,11 @@
     android:background="@color/white">
         <com.knowhow.android.picturewithai.CameraSurfaceView
             android:id="@+id/camera_preview"
-            android:layout_width="match_parent"
-            android:layout_height="600dp" />
+            android:layout_gravity="center"
+            android:layout_width="500dp"
+            android:layout_height="700dp" />
+
+
         <ImageButton
             android:id="@+id/button"
             android:layout_width="60dp"
@@ -21,4 +24,16 @@
             android:layout_marginTop="30dp"
             android:background="@android:color/transparent"
             android:src="@drawable/lens" />
+
+        <ProgressBar
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:id="@+id/progress"
+            android:layout_width="300dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:visibility="gone"
+            android:indeterminate="true" />
+
+
 </LinearLayout>

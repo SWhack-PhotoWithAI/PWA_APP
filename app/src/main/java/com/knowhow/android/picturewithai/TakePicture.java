@@ -26,12 +26,18 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+
 
 import com.knowhow.android.picturewithai.remote.ApiConstants;
 import com.knowhow.android.picturewithai.remote.ServiceInterface;
@@ -63,6 +69,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.icu.text.DisplayContext.LENGTH_SHORT;
+import static android.os.SystemClock.sleep;
 import static android.widget.Toast.LENGTH_LONG;
 
 public class TakePicture extends AppCompatActivity{
@@ -75,6 +82,8 @@ public class TakePicture extends AppCompatActivity{
     private ImageButton button_check, button_capture;
     private Bitmap nowBitmap=null;
 
+    private SubThread subThread = new SubThread();
+
     final int REQUEST_EXTERNAL_STORAGE = 100;
 
     //HerokuService service;
@@ -86,6 +95,11 @@ public class TakePicture extends AppCompatActivity{
     boolean isFirstTime = true;
     long startTime = 0;
     public Boolean isButton=false;
+    public Context mContext;
+
+    ProgressBar progress;
+    public Boolean stop=false;
+
 
 
 
@@ -107,73 +121,62 @@ public class TakePicture extends AppCompatActivity{
             }
         }
 
-
+        this.mContext = this;
         mPermissionsGranted = true;
 
         cameraSurfaceView = findViewById(R.id.camera_preview);
-//        cameraSurfaceView.camera.setPreviewCallback(new Camera.PreviewCallback() {
-//            @Override
-//            public void onPreviewFrame(byte[] data, Camera camera) {
-//
-//
-////                BitmapFactory.Options options = new BitmapFactory.Options();
-////                options.inSampleSize = 3;
-////
-////                Bitmap nowBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//                Log.d("hh", String.valueOf(data.length));
-//
-////                Uri uri = getImageUri(TakePicture.this, nowBitmap);
-//                //analyzeImage(uri);
-//
-//            }
-//        });
 
 
-//        button_check = findViewById(R.id.button1);
-//
-//
-//
-//        button_check.setOnClickListener(new Button.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                nowFrame();
-//
-//            }
-//        });
+
+
+
+
 
         button_capture = findViewById(R.id.button);
 
         button_capture.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 captureFace();
+
+
+
+
+
             }
         });
+
+
+        progress = (ProgressBar) findViewById(R.id.progress) ;
+        //subThread.setDaemon(true);
+        subThread.start();  // sub thread 시작
 
 
 
     }
 
-//    public void nowFrame() {
-//        cameraSurfaceView.camera.setPreviewCallback(new Camera.PreviewCallback() {
-//            @Override
-//            public void onPreviewFrame(byte[] data, Camera camera) {
-//
-//
-////                BitmapFactory.Options options = new BitmapFactory.Options();
-////                options.inSampleSize = 3;
-////
-////                Bitmap nowBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//                Log.d("hh", String.valueOf(data.length));
-//
-////                Uri uri = getImageUri(TakePicture.this, nowBitmap);
-//                //analyzeImage(uri);
-//
-//            }
-//        });
-//
-//
-//    }
+
+    class SubThread extends Thread {
+        @Override
+        public synchronized void run() {
+            while(nowBitmap==null){
+                Log.d("bitmap", "null");
+                try {
+                    sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                nowBitmap=cameraSurfaceView.nowBitmap;
+            }
+
+            Uri uri = getImageUri(TakePicture.this, nowBitmap);
+
+            String ImgPath = FileUtil.getPath(TakePicture.this,uri);
+            analyzeImage(Uri.parse(ImgPath));
+        }
+    }
+
 
 
 
@@ -193,20 +196,32 @@ public class TakePicture extends AppCompatActivity{
         cameraSurfaceView.capture(new Camera.PictureCallback() {
             @Override
             public void onPictureTaken(byte[] data, Camera camera) {
+                stop=true;
+
                 BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inSampleSize = 3;
 
                 Bitmap frontBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
                 saveImage(frontBitmap);
-                camera.startPreview(); // 캡쳐 후 camera.startPreview() 필수!
+
+                cameraSurfaceView.camera.release();
+                Intent intent = new Intent(TakePicture.this, BestPicture.class);
+
+                Uri uri = getImageUri(TakePicture.this, frontBitmap);
+                String ImgPath = FileUtil.getPath(TakePicture.this,uri);
+                intent.putExtra("path", String.valueOf(Uri.parse(ImgPath)));
+
+
+                //int best_idx=Integer.toInteger(response.body().string());
+
+
+                startActivity(intent);
+
             }
         });
     }
 
-    public Bitmap byteArrayToBitmap( byte[] $byteArray ) {
-        Bitmap bitmap = BitmapFactory.decodeByteArray( $byteArray, 0, $byteArray.length ) ;
-        return bitmap ;
-    }
+
 
 
 
@@ -251,17 +266,30 @@ public class TakePicture extends AppCompatActivity{
     }
 
 
+
+
     //===== Upload files to server
     public void analyzeImage(Uri uri){
 
-        MultipartBody.Part list=prepareFilePart("image", uri);
 
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
+                progress.setVisibility(View.VISIBLE);
+
+            }
+        });
+        List<MultipartBody.Part> list = new ArrayList<>();
+
+        Log.d("uri", String.valueOf(uri));
+        //list.add(prepareFilePart("image", uri));
 
         serviceInterface = ApiConstants2.getClient().create(ServiceInterface2.class);
 
 
-        Call<ResponseBody> call = serviceInterface.analyzeImages(list);
+
+        Call<ResponseBody> call = serviceInterface.analyzeImages(prepareFilePart("image", uri));
 
 
 
@@ -276,8 +304,38 @@ public class TakePicture extends AppCompatActivity{
 
                 try {
 
+                    runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                progress.setVisibility(View.GONE);
 
-                    Log.d("vv", String.valueOf(response.code()));
+                            }
+                        });
+
+
+
+                    if(!stop) {
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        String message = jObject.getString("sen");
+//
+//                    if(message.length()){
+//                        message="인물 사진이 아닙니다";
+//                    }
+                        //Intent intent = new Intent(TakePicture.this, BestPicture.class);
+                        //intent.putExtra("path", String.valueOf(files.get(best_idx)));
+                        Toast toast = Toast.makeText(TakePicture.this, message, Toast.LENGTH_LONG);
+                        ViewGroup group = (ViewGroup) toast.getView();
+                        TextView messageTextView = (TextView) group.getChildAt(0);
+                        messageTextView.setTextSize(30);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+
+                        nowBitmap = cameraSurfaceView.nowBitmap;
+                        Uri uri = getImageUri(TakePicture.this, nowBitmap);
+
+                        String ImgPath = FileUtil.getPath(TakePicture.this, uri);
+                        analyzeImage(Uri.parse(ImgPath));
+                    }
 
 
                 }
@@ -294,7 +352,7 @@ public class TakePicture extends AppCompatActivity{
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
 
-                Log.d("vv", "vv");
+                Log.i("my",t.getMessage());
 
 
             }
