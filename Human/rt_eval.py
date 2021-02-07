@@ -46,7 +46,7 @@ def main():
   #예시(여기가 카메라-> frame (이미지) 로드 해서 동작)
   imgDir_path = 'images/'
   img = Image.open(get_image_list(imgDir_path)[0])
-  print(get_image_list(imgDir_path))
+
   #임의의 thres 정의
   box_thres1 = img.size[0] * 0.45
   box_thres2 = img.size[0] * 0.55
@@ -64,8 +64,8 @@ def main():
   input_img = trf(img)
   out = model([input_img])[0]
 
-  print(out)
-  sen="인물 사진이 아닙니다."
+ 
+
   
   for box, score, keypoints in zip(out['boxes'], out['scores'], out['keypoints']):
     score = score.detach().numpy()
@@ -102,7 +102,7 @@ def main():
       sen = "카메라 각도를 오른쪽으로 조금 돌려주세요"
       
     return sen
-  return sen
+
 
 
 
