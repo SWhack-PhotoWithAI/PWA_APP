@@ -14,7 +14,7 @@ import java.util.List;
 
 import static android.widget.Toast.LENGTH_LONG;
 
-public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback{
+public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback{
 
     public SurfaceHolder holder;
     public Camera camera=null;
@@ -37,6 +37,23 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     }
 
 
+    private int findFrontSideCamera() {
+        int cameraId=0;
+        Camera.CameraInfo cameraInfo=new Camera.CameraInfo();
+        cameraId=Camera.getNumberOfCameras();
+
+        for(int i=0;i<cameraId;i++){
+
+            Camera.getCameraInfo(i, cameraInfo);
+
+            if(cameraInfo.facing==Camera.CameraInfo.CAMERA_FACING_FRONT){
+                cameraId=i;
+                break;
+            }
+        }
+        return cameraId;
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 
@@ -44,9 +61,16 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
         camera = Camera.open(0);
 
+        //int cameraId=findFrontSideCamera();
+
+        //camera = Camera.open(cameraId);
+
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             camera.setDisplayOrientation(90);
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setRotation(90);
+            camera.setParameters(parameters);
         }
 
         try{
@@ -108,7 +132,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
         try {
             camera.setPreviewDisplay(holder);
             camera.startPreview();
-            //camera.setPreviewCallback(this);
+            camera.setPreviewCallback(this);
 
             //startFaceDetection(); // re-start face detection feature
 
@@ -137,5 +161,8 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     }
 
 
-
+    @Override
+    public void onPreviewFrame(byte[] data, Camera camera) {
+        Log.d("hh", String.valueOf(data.length));
+    }
 }

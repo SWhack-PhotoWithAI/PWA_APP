@@ -111,6 +111,23 @@ public class TakePicture extends AppCompatActivity{
         mPermissionsGranted = true;
 
         cameraSurfaceView = findViewById(R.id.camera_preview);
+//        cameraSurfaceView.camera.setPreviewCallback(new Camera.PreviewCallback() {
+//            @Override
+//            public void onPreviewFrame(byte[] data, Camera camera) {
+//
+//
+////                BitmapFactory.Options options = new BitmapFactory.Options();
+////                options.inSampleSize = 3;
+////
+////                Bitmap nowBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+//                Log.d("hh", String.valueOf(data.length));
+//
+////                Uri uri = getImageUri(TakePicture.this, nowBitmap);
+//                //analyzeImage(uri);
+//
+//            }
+//        });
+
 
 //        button_check = findViewById(R.id.button1);
 //
@@ -137,26 +154,26 @@ public class TakePicture extends AppCompatActivity{
 
     }
 
-    public void nowFrame() {
-        cameraSurfaceView.camera.setPreviewCallback(new Camera.PreviewCallback() {
-            @Override
-            public void onPreviewFrame(byte[] data, Camera camera) {
-
-
-//                BitmapFactory.Options options = new BitmapFactory.Options();
-//                options.inSampleSize = 3;
+//    public void nowFrame() {
+//        cameraSurfaceView.camera.setPreviewCallback(new Camera.PreviewCallback() {
+//            @Override
+//            public void onPreviewFrame(byte[] data, Camera camera) {
 //
-//                Bitmap nowBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-                Log.d("hh", String.valueOf(data.length));
-
-//                Uri uri = getImageUri(TakePicture.this, nowBitmap);
-                //analyzeImage(uri);
-
-            }
-        });
-
-
-    }
+//
+////                BitmapFactory.Options options = new BitmapFactory.Options();
+////                options.inSampleSize = 3;
+////
+////                Bitmap nowBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+//                Log.d("hh", String.valueOf(data.length));
+//
+////                Uri uri = getImageUri(TakePicture.this, nowBitmap);
+//                //analyzeImage(uri);
+//
+//            }
+//        });
+//
+//
+//    }
 
 
 
