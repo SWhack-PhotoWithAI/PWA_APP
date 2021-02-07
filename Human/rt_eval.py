@@ -103,6 +103,7 @@ def main():
     
     if sen==None:
         sen="인물 사진이 아닙니다"
+        
     return sen
 
 
