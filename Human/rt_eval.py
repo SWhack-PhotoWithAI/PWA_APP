@@ -100,7 +100,9 @@ def main():
       sen = "카메라 각도를 왼쪽으로 조금 돌려주세요"
     if mid_box >box_thres2:
       sen = "카메라 각도를 오른쪽으로 조금 돌려주세요"
-      
+    
+    if sen==None:
+        sen="인물 사진이 아닙니다"
     return sen
 
 
