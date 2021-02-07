@@ -102,7 +102,7 @@ def main():
       sen = "카메라 각도를 오른쪽으로 조금 돌려주세요"
       
     return sen
-
+  return sen
 
 
 
