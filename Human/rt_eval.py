@@ -85,7 +85,8 @@ def main():
     #keypoints[15],keypoint[16] 왼쪽 발목, 오른쪽 발목
     temp_leftfoot = keypoints[15][1]
     temp_rigthfoot = keypoints[16][1]
-      
+     
+    sen="인물 사진이 아닙니다."
     if temp_face >topthres_1 and temp_face < topthres_2:
       if temp_leftfoot > bottomthres and temp_rigthfoot > bottomthres:
         sen = "좋아요!! 지금입니다 !! 사진을 찍어 주세요"
