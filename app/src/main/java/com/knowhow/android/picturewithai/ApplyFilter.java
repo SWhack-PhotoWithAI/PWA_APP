@@ -21,7 +21,6 @@ import com.knowhow.android.picturewithai.remote.ApiConstants;
 import com.knowhow.android.picturewithai.remote.ServiceInterface;
 import com.knowhow.android.picturewithai.utils.FileUtil;
 
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -1,6 +1,5 @@
 package com.knowhow.android.picturewithai;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -9,65 +8,42 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
-import android.net.Uri;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
-
-import com.knowhow.android.picturewithai.utils.FileUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import static android.widget.Toast.LENGTH_LONG;
 
 public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Camera.PreviewCallback{
 
     public SurfaceHolder holder;
     public Camera camera=null;
     public Bitmap nowBitmap=null;
-    public Context context;
+
 
 
     public CameraSurfaceView(Context context) {
         super(context);
         init(context);
-        this.context=context;
+
     }
 
     public CameraSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
-        this.context=context;
+
     }
 
 
     private void init(Context context) {
         holder=getHolder();
         holder.addCallback(this);
-        //this.context = context;
     }
 
 
-    private int findFrontSideCamera() {
-        int cameraId=0;
-        Camera.CameraInfo cameraInfo=new Camera.CameraInfo();
-        cameraId=Camera.getNumberOfCameras();
-
-        for(int i=0;i<cameraId;i++){
-
-            Camera.getCameraInfo(i, cameraInfo);
-
-            if(cameraInfo.facing==Camera.CameraInfo.CAMERA_FACING_FRONT){
-                cameraId=i;
-                break;
-            }
-        }
-        return cameraId;
-    }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -75,10 +51,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
 
         camera = Camera.open(0);
-
-        //int cameraId=findFrontSideCamera();
-
-        //camera = Camera.open(cameraId);
 
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -107,18 +79,9 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
             parameters.setPictureSize(mSize.width, mSize.height);
 
-            //camera.setPreviewDisplay(holder);
             camera.setParameters(parameters);
             camera.setPreviewDisplay(holder);
             camera.startPreview();
-            //camera.setPreviewCallback(this);
-            //camera.stopFaceDetection();
-
-            //startFaceDetection();
-
-
-
-
 
 
 
@@ -155,7 +118,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
             camera.startPreview();
             camera.setPreviewCallback(this);
 
-            //startFaceDetection(); // re-start face detection feature
 
         } catch (Exception e){
             // ignore: tried to stop a non-existent preview
@@ -165,7 +127,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        //camera.stopFaceDetection();
         camera.stopPreview();
         camera.release();
         camera=null;
@@ -202,10 +163,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
         // We rotate the same Bitmap
         nowBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-
-
-
-
 
     }
 }

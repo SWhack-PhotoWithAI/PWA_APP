@@ -50,7 +50,6 @@ public class SelectCategory extends AppCompatActivity {
 
     final int REQUEST_EXTERNAL_STORAGE = 100;
 
-    //HerokuService service;
     ServiceInterface serviceInterface;
     List<Uri> files = new ArrayList<>();
 
@@ -58,6 +57,7 @@ public class SelectCategory extends AppCompatActivity {
 
     private SubThread subThread = new SubThread();
 
+    private ProgressBar progress;
 
 
     @Override
@@ -66,42 +66,31 @@ public class SelectCategory extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_select_category);
 
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(getString(R.string.base_url))
-//                .build();
+        progress = findViewById(R.id.progress);
 
-        //service = retrofit.create(HerokuService.class);
-        //uploadImage();
-        //uploadMultipleImage();
         View personimage = findViewById(R.id.personImage);
-        personimage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        personimage.setOnClickListener(v -> {
 
-                if (ActivityCompat.checkSelfPermission(SelectCategory.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(SelectCategory.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
-//                    return;
-                } else {
-                    launchGalleryIntent();
-                    type="Person";
+            if (ActivityCompat.checkSelfPermission(SelectCategory.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(SelectCategory.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
 
-                }
+            } else {
+                launchGalleryIntent();
+                type="Person";
+
             }
         });
 
 
         View sightimage = findViewById(R.id.sightImage);
-        sightimage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        sightimage.setOnClickListener(v -> {
 
-                if (ActivityCompat.checkSelfPermission(SelectCategory.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(SelectCategory.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
-//                    return;
-                } else {
-                    launchGalleryIntent();
-                    type="Background";
-                }
+            if (ActivityCompat.checkSelfPermission(SelectCategory.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(SelectCategory.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
+
+            } else {
+                launchGalleryIntent();
+                type="Background";
             }
         });
     }
@@ -124,21 +113,17 @@ public class SelectCategory extends AppCompatActivity {
 
         public void predictPerson() {
             Log.d("type", "person");
+
             List<MultipartBody.Part> list = new ArrayList<>();
 
             for (Uri uri : files) {
-
 
                 list.add(prepareFilePart("image", uri));
             }
 
             serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
-
-
             Call<ResponseBody> call = serviceInterface.predictPerson(list);
-
-            ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
-            progress.setVisibility(View.VISIBLE);
+            runOnUiThread(() -> progress.setVisibility(View.VISIBLE));
 
 
             call.enqueue(new Callback<ResponseBody>() {
@@ -150,8 +135,7 @@ public class SelectCategory extends AppCompatActivity {
 
                     try {
 
-
-                        progress.setVisibility(View.GONE);
+                        runOnUiThread(() -> progress.setVisibility(View.GONE));
 
 
                         JSONObject jObject = new JSONObject(response.body().string());
@@ -159,8 +143,6 @@ public class SelectCategory extends AppCompatActivity {
 
                         Intent intent = new Intent(SelectCategory.this, BestPicture.class);
                         intent.putExtra("path", String.valueOf(files.get(best_idx)));
-                        Log.d("files", String.valueOf(best_idx));
-                        //int best_idx=Integer.toInteger(response.body().string());
 
 
                         startActivity(intent);
@@ -168,7 +150,7 @@ public class SelectCategory extends AppCompatActivity {
 
                     } catch (Exception e) {
                         Log.d("Exception", "|=>" + e.getMessage());
-//
+
                     }
 
 
@@ -178,8 +160,7 @@ public class SelectCategory extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.d("testlist", String.valueOf(list.size()));
-                    Log.d("testlist", String.valueOf(files.size()));
+
                     Log.i("my", t.getMessage());
 
                     files.clear();
@@ -189,7 +170,6 @@ public class SelectCategory extends AppCompatActivity {
         }
 
 
-        //===== Upload files to server
         public void predictBackground() {
             Log.d("type", "background");
             List<MultipartBody.Part> list = new ArrayList<>();
@@ -205,7 +185,7 @@ public class SelectCategory extends AppCompatActivity {
 
             Call<ResponseBody> call = serviceInterface.predictBackground(list);
 
-            ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
+            ProgressBar progress = findViewById(R.id.progress);
             progress.setVisibility(View.VISIBLE);
 
 
@@ -228,7 +208,6 @@ public class SelectCategory extends AppCompatActivity {
                         Intent intent = new Intent(SelectCategory.this, BestPicture.class);
                         intent.putExtra("path", String.valueOf(files.get(best_idx)));
                         Log.d("files", String.valueOf(best_idx));
-                        //int best_idx=Integer.toInteger(response.body().string());
 
 
                         startActivity(intent);
@@ -236,7 +215,6 @@ public class SelectCategory extends AppCompatActivity {
 
                     } catch (Exception e) {
                         Log.d("Exception", "|=>" + e.getMessage());
-//
                     }
 
 
@@ -246,8 +224,7 @@ public class SelectCategory extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.d("testlist", String.valueOf(list.size()));
-                    Log.d("testlist", String.valueOf(files.size()));
+
                     Log.i("my", t.getMessage());
 
                     files.clear();
@@ -290,35 +267,11 @@ public class SelectCategory extends AppCompatActivity {
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_EXTERNAL_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    //launchGalleryIntent();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
-        }
-    }
-
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_EXTERNAL_STORAGE && resultCode == RESULT_OK) {
 
-            //final ImageView imageView = findViewById(R.id.imageview);
+
             final List<Bitmap> bitmaps = new ArrayList<>();
             ClipData clipData = data.getClipData();
 
@@ -328,14 +281,10 @@ public class SelectCategory extends AppCompatActivity {
                 //multiple images selecetd
                 for (int i = 0; i < clipData.getItemCount(); i++) {
                     Uri img = clipData.getItemAt(i).getUri();
-
-
                     String imgPath = FileUtil.getPath(SelectCategory.this,img);
-
                     files.add(Uri.parse(imgPath));
 
 
-                    Log.d("URI", img.toString());
                     try {
                         InputStream inputStream = getContentResolver().openInputStream(img);
                         Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
@@ -349,13 +298,10 @@ public class SelectCategory extends AppCompatActivity {
                 //single image selected
 
                 Uri img = data.getData();
-                Log.d("uri", String.valueOf(img));
-
                 String imgPath = FileUtil.getPath(SelectCategory.this,img);
-
                 files.add(Uri.parse(imgPath));
 
-                //uploadImages();
+
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(img);
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
@@ -366,34 +312,8 @@ public class SelectCategory extends AppCompatActivity {
 
             }
 
-            Log.d("typetype", type);
             subThread.start();  // sub thread 시작
 
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    for (final Bitmap b : bitmaps) {
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                imageView.setImageBitmap(b);
-//
-//                                //uploadImage();
-//                                //fileUpload(new File(filePath));
-//                                //uploadImage();
-//                                //testHeroku();
-//
-//                            }
-//                        });
-//
-//                        try {
-//                            Thread.sleep(3000);
-//                        } catch (InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//            }).start();
         }
     }
 }
