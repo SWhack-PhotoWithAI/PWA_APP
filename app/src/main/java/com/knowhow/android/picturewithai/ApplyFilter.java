@@ -115,6 +115,8 @@ public class ApplyFilter extends AppCompatActivity {
         shareImage.setOnClickListener(v -> {
 
             if (resultUri!=null) {
+
+
                 Intent intent = new Intent(Intent.ACTION_SEND);
 
 
@@ -124,9 +126,11 @@ public class ApplyFilter extends AppCompatActivity {
 
                 Intent Sharing = Intent.createChooser(intent, "Share to");
                 startActivity(Sharing);
+
             }
         });
     }
+
 
 
     public void launchGalleryIntent() {
@@ -241,6 +245,7 @@ public class ApplyFilter extends AppCompatActivity {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+
         return Uri.parse(path);
     }
 
@@ -251,7 +256,7 @@ public class ApplyFilter extends AppCompatActivity {
         File myDir = new File(root);
 
         @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String fname = "Front-" + timeStamp + ".png";
+        String fname = timeStamp + ".png";
         File file = new File(myDir, fname);
 
 

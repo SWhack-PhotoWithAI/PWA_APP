@@ -114,7 +114,7 @@ public class BestPicture extends AppCompatActivity {
         File myDir = new File(root);
 
         @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String fname = "Front-" + timeStamp + ".png";
+        String fname = timeStamp + ".png";
         File file = new File(myDir, fname);
 
 
