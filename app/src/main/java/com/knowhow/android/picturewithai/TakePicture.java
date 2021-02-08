@@ -214,7 +214,7 @@ public class TakePicture extends AppCompatActivity{
                             JSONObject jObject = new JSONObject(response.body().string());
                             String message = jObject.getString("sen");
 
-                            Toast toast = Toast.makeText(TakePicture.this,"Completely Saved!", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(TakePicture.this,message, Toast.LENGTH_LONG);
 
                             TextView textView = new TextView(TakePicture.this);
                             textView.setBackgroundResource(R.drawable.rounded_corner_rectangle);
@@ -222,7 +222,7 @@ public class TakePicture extends AppCompatActivity{
                             textView.setTextSize(30);
 
                             textView.setPadding(10, 10, 10, 10);
-                            textView.setText(getString(R.string.saved));
+                            textView.setText(message);
                             toast.setGravity(Gravity.CENTER, 0, 0);
                             toast.setView(textView);
 
