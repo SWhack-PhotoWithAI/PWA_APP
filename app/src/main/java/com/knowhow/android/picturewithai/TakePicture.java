@@ -137,11 +137,11 @@ public class TakePicture extends AppCompatActivity{
         subThread.setDaemon(true);
         subThread.start();  // sub thread 시작
 
-        try {
-            module = Module.load(assetFilePath(this, "model.pt"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            module = Module.load(assetFilePath(this, "model.pt"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 

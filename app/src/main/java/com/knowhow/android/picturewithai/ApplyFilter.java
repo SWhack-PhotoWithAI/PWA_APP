@@ -4,28 +4,41 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.ClipData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.knowhow.android.picturewithai.remote.ApiConstants;
 import com.knowhow.android.picturewithai.remote.ServiceInterface;
 import com.knowhow.android.picturewithai.utils.FileUtil;
 
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -42,11 +55,12 @@ public class ApplyFilter extends AppCompatActivity {
 
     final int REQUEST_EXTERNAL_STORAGE = 100;
 
-    List<Uri> files = new ArrayList<>();
-
     ServiceInterface serviceInterface;
 
     ImageView original, filtered;
+    View saveImage, shareImage;
+    Uri resultUri=null;
+    Bitmap resultBitmap=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +72,38 @@ public class ApplyFilter extends AppCompatActivity {
 
         original = findViewById(R.id.orgImage);
         filtered = findViewById(R.id.filteredImage);
+        saveImage = findViewById(R.id.saveImage);
+        shareImage = findViewById(R.id.shareImage);
+
+        saveImage.setOnClickListener(v -> {
+            if(resultBitmap!=null){
+                saveImage(resultBitmap);
+
+                Toast toast = Toast.makeText(ApplyFilter.this, "Completely Saved!", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                ViewGroup group = (ViewGroup) toast.getView();
+                TextView messageTextView = (TextView) group.getChildAt(0);
+                messageTextView.setTextSize(20);
+
+                toast.show();
+            }
+        });
+
+
+        shareImage.setOnClickListener(v -> {
+
+            if (resultUri!=null) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+
+
+                intent.setType("image/*");
+
+                intent.putExtra(Intent.EXTRA_STREAM, resultUri);
+
+                Intent Sharing = Intent.createChooser(intent, "Share to");
+                startActivity(Sharing);
+            }
+        });
     }
 
 
@@ -76,7 +122,6 @@ public class ApplyFilter extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_EXTERNAL_STORAGE && resultCode == RESULT_OK) {
-
 
 
             Uri img = data.getData();
@@ -140,7 +185,6 @@ public class ApplyFilter extends AppCompatActivity {
 
                 try {
 
-
                     progress.setVisibility(View.GONE);
 
                     File downloadedFile = new File(getFilesDir(), "cartoon.jpg");
@@ -148,18 +192,17 @@ public class ApplyFilter extends AppCompatActivity {
                     sink.writeAll(response.body().source());
                     sink.close();
                     String filePath = downloadedFile.getPath();
-                    Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                    resultBitmap = BitmapFactory.decodeFile(filePath);
+                    filtered.setImageBitmap(resultBitmap);
 
-                    filtered.setImageBitmap(bitmap);
+                    resultUri = getImageUri(ApplyFilter.this, resultBitmap);
 
                 }
                 catch (Exception e){
                     Log.d("Exception","|=>"+e.getMessage());
-//
+
                 }
 
-
-                files.clear();
 
             }
 
@@ -168,9 +211,54 @@ public class ApplyFilter extends AppCompatActivity {
 
                 Log.i("my",t.getMessage());
 
-                files.clear();
-
             }
         });
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    private void saveImage(Bitmap frontBitmap) {
+
+        String root = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES).toString();
+        File myDir = new File(root);
+
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String fname = "Front-" + timeStamp + ".png";
+        File file = new File(myDir, fname);
+
+
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            frontBitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+            // sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
+            //     Uri.parse("file://"+ Environment.getExternalStorageDirectory())));
+            out.flush();
+            out.close();
+
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // Tell the media scanner about the new file so that it is
+        // immediately available to the user.
+        // Tell the media scanner about the new file so that it is
+// immediately available to the user.
+
+
+        MediaScannerConnection.scanFile(this, new String[]{file.toString()}, null,
+                new MediaScannerConnection.OnScanCompletedListener() {
+                    public void onScanCompleted(String path, Uri uri) {
+                        Log.i("ExternalStorage", "Scanned " + path + ":");
+                        Log.i("ExternalStorage", "-> uri=" + uri);
+                    }
+                });
+
     }
 }

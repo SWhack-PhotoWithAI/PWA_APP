@@ -16,29 +16,14 @@
         android:layout_centerInParent="true"
         android:layout_marginTop="60dp"
         android:background="@drawable/categorytitle" />
-    <View
-        android:id="@+id/info"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="290dp"
-        android:layout_marginTop="152dp"
-        android:background="@drawable/info" />
-    <View
-        android:id="@+id/bestalbum"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="150dp"
-        android:layout_marginStart="320dp"
-        android:background="@drawable/album" />
+
     <ImageView
         android:id="@+id/orgImage"
         android:layout_width="276dp"
         android:layout_height="220dp"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="200dp" />
+        android:layout_marginTop="150dp" />
 
     <ImageView
         android:id="@+id/filteredImage"
@@ -46,7 +31,33 @@
         android:layout_height="220dp"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="470dp" />
+        android:layout_marginTop="420dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="680dp">
+
+        <View
+            android:id="@+id/saveImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginRight="50dp"
+            android:background="@drawable/upload" />
+
+
+        <View
+            android:id="@+id/shareImage"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/share2" />
+
+    </LinearLayout>
+
+
 
     <ProgressBar
         android:id="@+id/progress"
@@ -54,4 +65,7 @@
         android:layout_height="100dp"
         android:layout_centerInParent="true"
         android:visibility="gone" />
+
+
+
 </RelativeLayout>
