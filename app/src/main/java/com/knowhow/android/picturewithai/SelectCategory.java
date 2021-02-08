@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -55,6 +56,7 @@ public class SelectCategory extends AppCompatActivity {
 
     public String type="";
 
+    private SubThread subThread = new SubThread();
 
 
 
@@ -105,191 +107,175 @@ public class SelectCategory extends AppCompatActivity {
     }
 
 
-    //===== Upload files to server
-    public void predictPerson(){
-        Log.d("type", "person");
-        List<MultipartBody.Part> list = new ArrayList<>();
 
-        for (Uri uri:files) {
+    class SubThread extends Thread {
+        @Override
+        public synchronized void run() {
+
+            if (type.equals("Background")) {
+                predictBackground();
+            }else {
+                predictPerson();
+            }
 
 
-            list.add(prepareFilePart("image", uri));
+
         }
 
-        serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
+        public void predictPerson() {
+            Log.d("type", "person");
+            List<MultipartBody.Part> list = new ArrayList<>();
+
+            for (Uri uri : files) {
 
 
-        Call<ResponseBody> call = serviceInterface.predictPerson(list);
+                list.add(prepareFilePart("image", uri));
+            }
 
-        ProgressBar progress = (ProgressBar) findViewById(R.id.progress) ;
-        progress.setVisibility(View.VISIBLE);
-
-
-        call.enqueue(new Callback<ResponseBody>() {
+            serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
 
 
+            Call<ResponseBody> call = serviceInterface.predictPerson(list);
 
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-
-                try {
+            ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
+            progress.setVisibility(View.VISIBLE);
 
 
-                    progress.setVisibility(View.GONE);
+            call.enqueue(new Callback<ResponseBody>() {
 
 
-                    JSONObject jObject = new JSONObject(response.body().string());
-                    int best_idx= jObject.getInt("index");
-
-                    Intent intent = new Intent(SelectCategory.this, BestPicture.class);
-                    intent.putExtra("path", String.valueOf(files.get(best_idx)));
-                    Log.d("files", String.valueOf(best_idx));
-                    //int best_idx=Integer.toInteger(response.body().string());
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
 
-                    startActivity(intent);
+                    try {
 
 
-                }
-                catch (Exception e){
-                    Log.d("Exception","|=>"+e.getMessage());
+                        progress.setVisibility(View.GONE);
+
+
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        int best_idx = jObject.getInt("index");
+
+                        Intent intent = new Intent(SelectCategory.this, BestPicture.class);
+                        intent.putExtra("path", String.valueOf(files.get(best_idx)));
+                        Log.d("files", String.valueOf(best_idx));
+                        //int best_idx=Integer.toInteger(response.body().string());
+
+
+                        startActivity(intent);
+
+
+                    } catch (Exception e) {
+                        Log.d("Exception", "|=>" + e.getMessage());
 //
+                    }
+
+
+                    files.clear();
+                    list.clear();
                 }
 
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.d("testlist", String.valueOf(list.size()));
+                    Log.d("testlist", String.valueOf(files.size()));
+                    Log.i("my", t.getMessage());
 
-                files.clear();
-                list.clear();
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("testlist", String.valueOf(list.size()));
-                Log.d("testlist", String.valueOf(files.size()));
-                Log.i("my",t.getMessage());
-
-                files.clear();
-                list.clear();
-            }
-        });
-    }
-
-
-
-    //===== Upload files to server
-    public void predictBackground(){
-        Log.d("type", "background");
-        List<MultipartBody.Part> list = new ArrayList<>();
-
-        for (Uri uri:files) {
-
-
-            list.add(prepareFilePart("image", uri));
+                    files.clear();
+                    list.clear();
+                }
+            });
         }
 
-        serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
+
+        //===== Upload files to server
+        public void predictBackground() {
+            Log.d("type", "background");
+            List<MultipartBody.Part> list = new ArrayList<>();
+
+            for (Uri uri : files) {
 
 
-        Call<ResponseBody> call = serviceInterface.predictBackground(list);
+                list.add(prepareFilePart("image", uri));
+            }
 
-        ProgressBar progress = (ProgressBar) findViewById(R.id.progress) ;
-        progress.setVisibility(View.VISIBLE);
-
-
-        call.enqueue(new Callback<ResponseBody>() {
+            serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
 
 
+            Call<ResponseBody> call = serviceInterface.predictBackground(list);
 
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-
-                try {
-
-                    ResponseBody addMediaModel = response.body();
-                    progress.setVisibility(View.GONE);
+            ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
+            progress.setVisibility(View.VISIBLE);
 
 
-                    JSONObject jObject = new JSONObject(response.body().string());
-                    int best_idx= jObject.getInt("index");
-
-                    Intent intent = new Intent(SelectCategory.this, BestPicture.class);
-                    intent.putExtra("path", String.valueOf(files.get(best_idx)));
-                    Log.d("files", String.valueOf(best_idx));
-                    //int best_idx=Integer.toInteger(response.body().string());
+            call.enqueue(new Callback<ResponseBody>() {
 
 
-                    startActivity(intent);
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
 
-                }
-                catch (Exception e){
-                    Log.d("Exception","|=>"+e.getMessage());
+                    try {
+
+
+                        progress.setVisibility(View.GONE);
+
+
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        int best_idx = jObject.getInt("index");
+
+                        Intent intent = new Intent(SelectCategory.this, BestPicture.class);
+                        intent.putExtra("path", String.valueOf(files.get(best_idx)));
+                        Log.d("files", String.valueOf(best_idx));
+                        //int best_idx=Integer.toInteger(response.body().string());
+
+
+                        startActivity(intent);
+
+
+                    } catch (Exception e) {
+                        Log.d("Exception", "|=>" + e.getMessage());
 //
+                    }
+
+
+                    files.clear();
+                    list.clear();
                 }
 
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.d("testlist", String.valueOf(list.size()));
+                    Log.d("testlist", String.valueOf(files.size()));
+                    Log.i("my", t.getMessage());
 
-                files.clear();
-                list.clear();
-            }
+                    files.clear();
+                    list.clear();
+                }
+            });
+        }
 
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("testlist", String.valueOf(list.size()));
-                Log.d("testlist", String.valueOf(files.size()));
-                Log.i("my",t.getMessage());
 
-                files.clear();
-                list.clear();
-            }
-        });
-    }
+        @NonNull
+        private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
 
-    private String getRealPathFromURI(Uri contentURI) {
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            return contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            return cursor.getString(idx);
+            File file = new File(fileUri.getPath());
+            Log.i("here is error", file.getAbsolutePath());
+            // create RequestBody instance from file
+
+            RequestBody requestFile =
+                    RequestBody.create(
+                            MediaType.parse("image/*"),
+                            file);
+
+            // MultipartBody.Part is used to send also the actual file name
+            return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
+
+
         }
     }
 
-    @NonNull
-    private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
-
-        File file = new File(fileUri.getPath());
-        Log.i("here is error",file.getAbsolutePath());
-        // create RequestBody instance from file
-
-        RequestBody requestFile =
-                RequestBody.create(
-                        MediaType.parse("image/*"),
-                        file);
-
-        // MultipartBody.Part is used to send also the actual file name
-        return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
-
-
-    }
-    /*
-    public void testHeroku(){
-        Call<ResponseBody> call = service.hello();
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> _,
-                                   Response<ResponseBody> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> _, Throwable t) {
-                System.out.println("good");
-            }
-        });
-    }
-   */
 
     public void launchGalleryIntent() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -381,11 +367,7 @@ public class SelectCategory extends AppCompatActivity {
             }
 
             Log.d("typetype", type);
-            if (type.equals("Background")) {
-                predictBackground();
-            }else {
-                predictPerson();
-            }
+            subThread.start();  // sub thread 시작
 
 //            new Thread(new Runnable() {
 //                @Override

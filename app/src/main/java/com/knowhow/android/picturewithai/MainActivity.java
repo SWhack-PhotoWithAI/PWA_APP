@@ -105,6 +105,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        View applyFilter = findViewById(R.id.mainmenu3);
+
+        applyFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ApplyFilter.class);
+                startActivity(intent);
+            }
+        });
+
 
 
 

@@ -32,5 +32,15 @@ public interface ServiceInterface {
     @Multipart
     @POST("predict_person")
     Call<ResponseBody> predictPerson(@Part List<MultipartBody.Part> files);
+
+    @Multipart
+    @POST("predict_person_rt")
+    Call<ResponseBody> analyzeImages(@Part MultipartBody.Part file);
+
+    @Multipart
+    @POST("cartoonization")
+    Call<ResponseBody> applyFilter(@Part List<MultipartBody.Part> files);
+
+
 }
 
