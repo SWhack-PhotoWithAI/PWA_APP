@@ -12,4 +12,6 @@
     <string name="ai_">내 앨범에서 AI로 사진 고르기</string>
 
     <string name="base_url">https://32ab3156c6a0.ngrok.io/</string>
+
+    <string name="saved">Completely Saved!</string>
 </resources>

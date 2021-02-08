@@ -14,6 +14,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -91,13 +93,21 @@ public class ApplyFilter extends AppCompatActivity {
             if(resultBitmap!=null){
                 saveImage(resultBitmap);
 
-                Toast toast = Toast.makeText(ApplyFilter.this, "Completely Saved!", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(ApplyFilter.this,"Completely Saved!", Toast.LENGTH_SHORT);
+
+                TextView textView = new TextView(ApplyFilter.this);
+                textView.setBackgroundResource(R.drawable.rounded_corner_rectangle);
+                textView.setTextColor(Color.WHITE);
+                textView.setTextSize(30);
+
+                textView.setPadding(10, 10, 10, 10);
+                textView.setText(getString(R.string.saved));
                 toast.setGravity(Gravity.CENTER, 0, 0);
-                ViewGroup group = (ViewGroup) toast.getView();
-                TextView messageTextView = (TextView) group.getChildAt(0);
-                messageTextView.setTextSize(20);
+                toast.setView(textView);
+
 
                 toast.show();
+
             }
         });
 

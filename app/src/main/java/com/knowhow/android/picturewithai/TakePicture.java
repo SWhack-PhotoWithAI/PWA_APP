@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
@@ -213,11 +214,19 @@ public class TakePicture extends AppCompatActivity{
                             JSONObject jObject = new JSONObject(response.body().string());
                             String message = jObject.getString("sen");
 
-                            Toast toast = Toast.makeText(TakePicture.this, message, Toast.LENGTH_LONG);
-                            ViewGroup group = (ViewGroup) toast.getView();
-                            TextView messageTextView = (TextView) group.getChildAt(0);
-                            messageTextView.setTextSize(30);
+                            Toast toast = Toast.makeText(TakePicture.this,"Completely Saved!", Toast.LENGTH_LONG);
+
+                            TextView textView = new TextView(TakePicture.this);
+                            textView.setBackgroundResource(R.drawable.rounded_corner_rectangle);
+                            textView.setTextColor(Color.WHITE);
+                            textView.setTextSize(30);
+
+                            textView.setPadding(10, 10, 10, 10);
+                            textView.setText(getString(R.string.saved));
                             toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.setView(textView);
+
+
                             toast.show();
 
                             nowBitmap = cameraSurfaceView.nowBitmap;
