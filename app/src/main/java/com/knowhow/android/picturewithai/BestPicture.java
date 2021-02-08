@@ -52,8 +52,6 @@ public class BestPicture extends AppCompatActivity {
 
             saveImage.setOnClickListener(v -> {
 
-                saveImage(bitmap);
-
                 Toast toast = Toast.makeText(BestPicture.this, "Completely Saved!", Toast.LENGTH_LONG);
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 ViewGroup group = (ViewGroup) toast.getView();
@@ -61,6 +59,9 @@ public class BestPicture extends AppCompatActivity {
                 messageTextView.setTextSize(20);
 
                 toast.show();
+
+                saveImage(bitmap);
+
 
             });
 

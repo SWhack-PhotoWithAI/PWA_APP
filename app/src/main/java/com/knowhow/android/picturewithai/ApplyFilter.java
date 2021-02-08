@@ -3,7 +3,10 @@ package com.knowhow.android.picturewithai;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
@@ -53,7 +56,8 @@ import retrofit2.Response;
 
 public class ApplyFilter extends AppCompatActivity {
 
-    final int REQUEST_EXTERNAL_STORAGE = 100;
+    private static final int REQUEST_EXTERNAL_STORAGE = 100;
+    private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 0;
 
     ServiceInterface serviceInterface;
 
@@ -74,6 +78,14 @@ public class ApplyFilter extends AppCompatActivity {
         filtered = findViewById(R.id.filteredImage);
         saveImage = findViewById(R.id.saveImage);
         shareImage = findViewById(R.id.shareImage);
+
+        if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.O) {
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_WRITE_EXTERNAL_STORAGE);
+            }
+
+        }
 
         saveImage.setOnClickListener(v -> {
             if(resultBitmap!=null){
@@ -259,6 +271,11 @@ public class ApplyFilter extends AppCompatActivity {
                         Log.i("ExternalStorage", "-> uri=" + uri);
                     }
                 });
+
+
+
+
+
 
     }
 }

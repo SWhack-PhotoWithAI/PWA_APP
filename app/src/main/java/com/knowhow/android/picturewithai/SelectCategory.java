@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -48,7 +49,10 @@ import retrofit2.Retrofit;
 
 public class SelectCategory extends AppCompatActivity {
 
-    final int REQUEST_EXTERNAL_STORAGE = 100;
+    private static final int REQUEST_EXTERNAL_STORAGE = 100;
+    private static final int PERMISSIONS_REQUEST_CAMERA = 0;
+    private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 0;
+    private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 0;
 
     ServiceInterface serviceInterface;
     List<Uri> files = new ArrayList<>();
@@ -67,30 +71,24 @@ public class SelectCategory extends AppCompatActivity {
 
         progress = findViewById(R.id.progress);
 
+
+
+
         View personimage = findViewById(R.id.personImage);
         personimage.setOnClickListener(v -> {
 
-            if (ActivityCompat.checkSelfPermission(SelectCategory.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(SelectCategory.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
+            launchGalleryIntent();
+            type="Person";
 
-            } else {
-                launchGalleryIntent();
-                type="Person";
-
-            }
         });
 
 
         View sightimage = findViewById(R.id.sightImage);
         sightimage.setOnClickListener(v -> {
 
-            if (ActivityCompat.checkSelfPermission(SelectCategory.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(SelectCategory.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_EXTERNAL_STORAGE);
+            launchGalleryIntent();
+            type="Background";
 
-            } else {
-                launchGalleryIntent();
-                type="Background";
-            }
         });
     }
 
@@ -305,6 +303,29 @@ public class SelectCategory extends AppCompatActivity {
 
 
 
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    //launchGalleryIntent();
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
         }
     }
 }

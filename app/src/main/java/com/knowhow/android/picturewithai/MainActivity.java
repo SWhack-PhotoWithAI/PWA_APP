@@ -2,8 +2,14 @@ package com.knowhow.android.picturewithai;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -15,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     Module module = null;
+    private static final int PERMISSIONS_REQUEST_CAMERA = 0;
+    private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 0;
+    private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 0;
 
 
     @Override
@@ -23,7 +32,17 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
+        if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.O) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("perm", "test3");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
+            }
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("perm", "test4");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_WRITE_EXTERNAL_STORAGE);
+            }
 
+        }
 
         View selectimage = findViewById(R.id.mainmenu1);
         selectimage.setOnClickListener(v -> {
@@ -34,18 +53,25 @@ public class MainActivity extends AppCompatActivity {
 
 
         View takePicture = findViewById(R.id.mainmenu2);
-        takePicture.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), TakePicture.class);
-            startActivity(intent);
+        takePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), TakePicture.class);
+                startActivity(intent);
+            }
         });
 
         View applyFilter = findViewById(R.id.mainmenu3);
 
-        applyFilter.setOnClickListener(v -> {
-            Intent intent = new Intent(getApplicationContext(), ApplyFilter.class);
-            startActivity(intent);
+        applyFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ApplyFilter.class);
+                startActivity(intent);
+            }
         });
 
     }
+
 
 }

@@ -75,16 +75,16 @@ import retrofit2.Response;
 public class TakePicture extends AppCompatActivity{
 
     private CameraSurfaceView cameraSurfaceView; // 카메라 surfaceview
-    private static final int PERMISSIONS_REQUEST_CAMERA = 0;
-    private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 0;
-    private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 0;
-    private static final int REQUEST_EXTERNAL_STORAGE = 100;
+
+
     private ServiceInterface serviceInterface;
     private ImageButton button_capture;
     private Bitmap nowBitmap=null;
     public Context mContext;
 
-
+    private static final int PERMISSIONS_REQUEST_CAMERA = 0;
+    private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 0;
+    private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 0;
     private static final double THRESHOLD = 0.95;
     private static final double box_thres1 = 1280 * 0.45;
     private static final double box_thres2 = 1280 * 0.55;
@@ -110,25 +110,19 @@ public class TakePicture extends AppCompatActivity{
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_take_picture);
 
-        if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.O) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
-            }
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_WRITE_EXTERNAL_STORAGE);
-            }
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSIONS_READ_EXTERNAL_STORAGE);
-            }
-        }
-
         this.mContext = this;
 
 
         cameraSurfaceView = findViewById(R.id.camera_preview);
 
 
+        if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.O) {
 
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_WRITE_EXTERNAL_STORAGE);
+            }
+
+        }
         button_capture = findViewById(R.id.button);
         button_capture.setOnClickListener(view -> captureFace());
 
@@ -163,6 +157,7 @@ public class TakePicture extends AppCompatActivity{
             return file.getAbsolutePath();
         }
     }
+
 
 
 
