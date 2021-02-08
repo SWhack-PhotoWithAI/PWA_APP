@@ -134,12 +134,18 @@ def cartoonization():
     _response = requests.post(url ,data = _data, files=_file)
     print(_response)
     if _response.status_code == 200:
+        os.remove(img_path)
+        
         with open(path, 'wb') as f:
             f.write(_response.content)
             f.close()
 
         return send_file(path, mimetype = 'image/jpeg')
 
+    if os.path.isfile(path):
+      os.remove(path)
+      
+      
     _dict = {}
     _dict['error'] = 'True'
     return _dict
