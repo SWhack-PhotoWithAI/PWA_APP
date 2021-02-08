@@ -1,7 +1,7 @@
 # PWA_APP
 
 ## Photo With AI: AI and Server Part
-Neural Image Assement Model과 Human Pose Evaluation Model을 사용 가능한 Server
+Neural Image Assement Model과 Human Pose Evaluation Model을 사용 가능한 Flask Server
 
 ###사용법
 1. Colab에서 run_FlaskServer.ipynb 파일을 연다.
@@ -35,3 +35,7 @@ Neural Image Assement Model과 Human Pose Evaluation Model을 사용 가능한 S
 
 
 ### url : {Server_URL} + /cartoonization
+
+
+##To do LIST
+1. Flask Server python으로 구현.
