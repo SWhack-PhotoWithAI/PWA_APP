@@ -66,6 +66,7 @@ def predict_person():
     for img_name, score in result.items():
         if score > max_score:
             best_img = img_name
+            max_score = score
 
     result_index = order_dict[best_img]
 
