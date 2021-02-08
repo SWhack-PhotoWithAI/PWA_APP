@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -49,7 +50,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public void surfaceCreated(SurfaceHolder holder) {
 
 
-
+        Log.d("camera", "created");
         camera = Camera.open(0);
 
 
@@ -104,7 +105,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
             //Log.d(TAG, "holder.getSurface() == null");
             return;
         }
-
+        Log.d("camera", "changed");
         try {
             camera.stopPreview();
 
@@ -127,7 +128,9 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        Log.d("camera", "destroyed");
         camera.stopPreview();
+        camera.setPreviewCallback(null);
         camera.release();
         camera=null;
     }

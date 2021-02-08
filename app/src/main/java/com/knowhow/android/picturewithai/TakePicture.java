@@ -286,7 +286,7 @@ public class TakePicture extends AppCompatActivity{
 
 
         cameraSurfaceView.capture((data, camera) -> {
-            stop=true;
+            //stop=true;
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 3;
@@ -294,7 +294,7 @@ public class TakePicture extends AppCompatActivity{
             Bitmap frontBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
             saveImage(frontBitmap);
 
-            cameraSurfaceView.camera.release();
+
             Intent intent = new Intent(TakePicture.this, BestPicture.class);
 
             Uri uri = getImageUri(TakePicture.this, frontBitmap);
