@@ -32,15 +32,16 @@ def get_image_list(image_dir):
     return images
 
 
-if 'images' not in os.listdir():
-  os.mkdir('images')
+def initialize(): 
+  if 'images' not in os.listdir():
+    os.mkdir('images')
   
-else:
-  imgDir_path = 'images/'
-  img_list = get_image_list(imgDir_path)
-  print(img_list)
-  for img_path in img_list:
-    os.remove(img_path)
+  else:
+    imgDir_path = 'images/'
+    img_list = get_image_list(imgDir_path)
+    print(img_list)
+    for img_path in img_list:
+      os.remove(img_path)
     
     
 
@@ -52,13 +53,15 @@ run_with_ngrok(app)   #starts ngrok when the app is run
 @app.route('/predict_background', methods = ['POST'])
 def predict_background(): #image 파일은 post형식으로 넘어오기 때문에
     #제일 score값이 좋은 image name을 return 하면 될듯.
+    
+
+    initialize()
+        
     img_dir = 'images/'
     files = request.files.getlist('image') #이미지 여러개 받아오도록 해야함
     order_dict = {}
     index = 0
-    
-    if os.path.isfile(img_dir + 'test.jpg'):
-      os.remove(img_dir + 'test.jpg')
+
       
       
     for file in files:
@@ -74,18 +77,20 @@ def predict_background(): #image 파일은 post형식으로 넘어오기 때문�
     _dict['index'] = result_index
     return _dict
 
+
+
 @app.route('/predict_person', methods = ['POST'])
 def predict_person():
+    
+    initialize()
+    
     img_dir = 'images/'
     files = request.files.getlist('image') #이미지 여러개 받아오도록 해야함
     
     order_dict = {}
     index = 0
     
-    if os.path.isfile(img_dir + 'test.jpg'):
-      os.remove(img_dir + 'test.jpg')
-      
-      
+     
     for file in files:
         img_path = img_dir + secure_filename(file.filename)
         order_dict[img_path] = index
@@ -110,6 +115,9 @@ def predict_person():
 
 @app.route('/predict_person_rt', methods = ['POST'])
 def predict_person_rt():
+    
+    initialize()
+    
     img_dir = 'images/'
     file = request.files.getlist('image')[0] #이미지 한 개 받아옴
     
@@ -118,7 +126,6 @@ def predict_person_rt():
     file.save(img_path)
 
     result = rt_main()
-    os.remove(img_path)
     
     _dict = {}
     _dict['sen'] = result
@@ -127,6 +134,9 @@ def predict_person_rt():
 
 @app.route('/cartoonization', methods = ['POST'])
 def cartoonization():
+    
+    initialize()
+    
     img_paths = []
     img_dir = 'images/'
     file = request.files.get('source') #이미지 여러개 받아오도록 해야함
@@ -144,7 +154,6 @@ def cartoonization():
     _response = requests.post(url ,data = _data, files=_file)
     print(_response)
     if _response.status_code == 200:
-        os.remove(img_path)
         
         with open(path, 'wb') as f:
             f.write(_response.content)
