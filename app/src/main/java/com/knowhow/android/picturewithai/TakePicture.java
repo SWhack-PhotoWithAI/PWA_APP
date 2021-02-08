@@ -101,7 +101,7 @@ public class TakePicture extends AppCompatActivity{
     private ProgressBar progress;
     public Boolean stop=false;
 
-    Module module;
+    //Module module;
 
 
     @Override
@@ -286,7 +286,7 @@ public class TakePicture extends AppCompatActivity{
 
 
         cameraSurfaceView.capture((data, camera) -> {
-            //stop=true;
+            stop=true;
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 3;
