@@ -56,6 +56,11 @@ def predict_background(): #image 파일은 post형식으로 넘어오기 때문�
     files = request.files.getlist('image') #이미지 여러개 받아오도록 해야함
     order_dict = {}
     index = 0
+    
+    if os.path.isfile(img_dir + 'test.jpg'):
+      os.remove(img_dir + 'test.jpg')
+      
+      
     for file in files:
         img_path = img_dir + secure_filename(file.filename)
         order_dict[img_path] = index
@@ -76,6 +81,11 @@ def predict_person():
     
     order_dict = {}
     index = 0
+    
+    if os.path.isfile(img_dir + 'test.jpg'):
+      os.remove(img_dir + 'test.jpg')
+      
+      
     for file in files:
         img_path = img_dir + secure_filename(file.filename)
         order_dict[img_path] = index
@@ -142,10 +152,7 @@ def cartoonization():
 
         return send_file(path, mimetype = 'image/jpeg')
 
-    if os.path.isfile(path):
-      os.remove(path)
-      
-      
+    
     _dict = {}
     _dict['error'] = 'True'
     return _dict
