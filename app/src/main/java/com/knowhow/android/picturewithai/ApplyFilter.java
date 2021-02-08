@@ -32,6 +32,8 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okio.BufferedSink;
+import okio.Okio;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,7 +46,7 @@ public class ApplyFilter extends AppCompatActivity {
 
     ServiceInterface serviceInterface;
 
-    ImageView original;
+    ImageView original, filtered;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class ApplyFilter extends AppCompatActivity {
         launchGalleryIntent();
 
         original = findViewById(R.id.orgImage);
+        filtered = findViewById(R.id.filteredImage);
     }
 
 
@@ -67,28 +70,6 @@ public class ApplyFilter extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_EXTERNAL_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    //launchGalleryIntent();
-                } else {
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
-        }
-    }
 
 
     @Override
@@ -96,59 +77,24 @@ public class ApplyFilter extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_EXTERNAL_STORAGE && resultCode == RESULT_OK) {
 
-            //final ImageView imageView = findViewById(R.id.imageview);
-            final List<Bitmap> bitmaps = new ArrayList<>();
-            ClipData clipData = data.getClipData();
 
 
-
-            if (clipData != null) {
-                //multiple images selecetd
-                for (int i = 0; i < clipData.getItemCount(); i++) {
-                    Uri img = clipData.getItemAt(i).getUri();
+            Uri img = data.getData();
 
 
-                    String imgPath = FileUtil.getPath(ApplyFilter.this,img);
+            String imgPath = FileUtil.getPath(ApplyFilter.this,img);
 
-                    files.add(Uri.parse(imgPath));
+            applyFilter(Uri.parse(imgPath));
 
+            try {
+                InputStream inputStream = getContentResolver().openInputStream(img);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 
-                    Log.d("URI", img.toString());
-                    try {
-                        InputStream inputStream = getContentResolver().openInputStream(img);
-                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                        bitmaps.add(bitmap);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
+                original.setImageBitmap(bitmap);
 
-            } else {
-                //single image selected
-
-                Uri img = data.getData();
-                Log.d("uri", String.valueOf(img));
-
-                String imgPath = FileUtil.getPath(ApplyFilter.this,img);
-
-                files.add(Uri.parse(imgPath));
-
-                //uploadImages();
-                try {
-                    InputStream inputStream = getContentResolver().openInputStream(img);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    bitmaps.add(bitmap);
-
-                    original.setImageBitmap(bitmap);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
-
-            applyFilter();
-
-
 
         }
     }
@@ -173,22 +119,14 @@ public class ApplyFilter extends AppCompatActivity {
 
 
     //===== Upload files to server
-    public void applyFilter(){
-
-        List<MultipartBody.Part> list = new ArrayList<>();
-
-        for (Uri uri:files) {
-
-
-            list.add(prepareFilePart("source", uri));
-        }
+    public void applyFilter(Uri uri){
 
         serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
 
 
-        Call<ResponseBody> call = serviceInterface.applyFilter(list);
+        Call<ResponseBody> call = serviceInterface.applyFilter(prepareFilePart("source", uri));
 
-        ProgressBar progress = (ProgressBar) findViewById(R.id.progress) ;
+        ProgressBar progress = findViewById(R.id.progress);
         progress.setVisibility(View.VISIBLE);
 
 
@@ -202,21 +140,17 @@ public class ApplyFilter extends AppCompatActivity {
 
                 try {
 
-                    Log.d("response", String.valueOf(response.code()));
-                    progress.setVisibility(View.GONE);
-//
-//
-//                    JSONObject jObject = new JSONObject(response.body().string());
-//                    int best_idx= jObject.getInt("index");
-//
-//                    Intent intent = new Intent(SelectCategory.this, BestPicture.class);
-//                    intent.putExtra("path", String.valueOf(files.get(best_idx)));
-//                    Log.d("files", String.valueOf(best_idx));
-//                    //int best_idx=Integer.toInteger(response.body().string());
-//
-//
-//                    startActivity(intent);
 
+                    progress.setVisibility(View.GONE);
+
+                    File downloadedFile = new File(getFilesDir(), "cartoon.jpg");
+                    BufferedSink sink = Okio.buffer(Okio.sink(downloadedFile));
+                    sink.writeAll(response.body().source());
+                    sink.close();
+                    String filePath = downloadedFile.getPath();
+                    Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+
+                    filtered.setImageBitmap(bitmap);
 
                 }
                 catch (Exception e){
@@ -226,17 +160,16 @@ public class ApplyFilter extends AppCompatActivity {
 
 
                 files.clear();
-                list.clear();
+
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.d("testlist", String.valueOf(list.size()));
-                Log.d("testlist", String.valueOf(files.size()));
+
                 Log.i("my",t.getMessage());
 
                 files.clear();
-                list.clear();
+
             }
         });
     }

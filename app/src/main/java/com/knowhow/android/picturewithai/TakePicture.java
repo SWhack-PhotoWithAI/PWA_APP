@@ -47,12 +47,16 @@ import com.knowhow.android.picturewithai.remote.ServiceInterface;
 import com.knowhow.android.picturewithai.utils.FileUtil;
 
 import org.json.JSONObject;
+import org.pytorch.Module;
 
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,13 +85,23 @@ public class TakePicture extends AppCompatActivity{
     public Context mContext;
 
 
+    private static final double THRESHOLD = 0.95;
+    private static final double box_thres1 = 1280 * 0.45;
+    private static final double box_thres2 = 1280 * 0.55;
+    private static final double topthres_1 = 720 * 0.35;
+    private static final double topthres_2 = 720 * 0.35;
+
+    //topthres_2 = img.size[1] * 0.55
+    //bottomthres = img.size[1] * 0.9
+
+
     private SubThread subThread = new SubThread();
 
 
     private ProgressBar progress;
     public Boolean stop=false;
 
-
+    Module module;
 
 
     @Override
@@ -123,9 +137,33 @@ public class TakePicture extends AppCompatActivity{
         subThread.setDaemon(true);
         subThread.start();  // sub thread 시작
 
-
+        try {
+            module = Module.load(assetFilePath(this, "model.pt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
+
+    public static String assetFilePath(Context context, String assetName) throws IOException {
+        File file = new File(context.getFilesDir(), assetName);
+        if (file.exists() && file.length() > 0) {
+            return file.getAbsolutePath();
+        }
+
+        try (InputStream is = context.getAssets().open(assetName)) {
+            try (OutputStream os = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4 * 1024];
+                int read;
+                while ((read = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, read);
+                }
+                os.flush();
+            }
+            return file.getAbsolutePath();
+        }
+    }
+
 
 
     class SubThread extends Thread {

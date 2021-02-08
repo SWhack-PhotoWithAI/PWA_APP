@@ -39,7 +39,7 @@ public interface ServiceInterface {
 
     @Multipart
     @POST("cartoonization")
-    Call<ResponseBody> applyFilter(@Part List<MultipartBody.Part> files);
+    Call<ResponseBody> applyFilter(@Part MultipartBody.Part files);
 
 
 }

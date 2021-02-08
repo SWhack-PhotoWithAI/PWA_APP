@@ -38,7 +38,15 @@
         android:layout_height="220dp"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="true"
-        android:layout_marginTop="300dp" />
+        android:layout_marginTop="200dp" />
+
+    <ImageView
+        android:id="@+id/filteredImage"
+        android:layout_width="276dp"
+        android:layout_height="220dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="470dp" />
 
     <ProgressBar
         android:id="@+id/progress"
