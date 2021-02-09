@@ -113,13 +113,15 @@ def predict_person():
     
     return _dict
 
+
+
 @app.route('/predict_person_rt', methods = ['POST'])
 def predict_person_rt():
     
     initialize()
     
     img_dir = 'images/'
-    file = request.files.getlist('image')[0] #이미지 한 개 받아옴
+    file = request.files.getlist('image')[0] # 이미지 한 개 받아옴
     
    
     img_path = img_dir + secure_filename(file.filename)
@@ -129,8 +131,11 @@ def predict_person_rt():
     
     _dict = {}
     _dict['sen'] = result
-   
+    print(result)
+    
     return _dict
+
+
 
 @app.route('/cartoonization', methods = ['POST'])
 def cartoonization():
@@ -139,7 +144,7 @@ def cartoonization():
     
     img_paths = []
     img_dir = 'images/'
-    file = request.files.get('source') #이미지 여러개 받아오도록 해야함
+    file = request.files.get('source') # 이미지 여러개 받아오도록 해야함
     img_path = img_dir + secure_filename(file.filename)
     print(img_path)
     file.save(img_path)
