@@ -21,27 +21,29 @@
         android:layout_height="500dp"
         android:layout_gravity="center"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
+<!--    <LinearLayout-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:layout_gravity="center"-->
+<!--        android:layout_marginTop="20dp">-->
+
+<!--        <View-->
+<!--            android:id="@+id/saveImage"-->
+<!--            android:layout_width="50dp"-->
+<!--            android:layout_height="50dp"-->
+<!--            android:layout_marginRight="50dp"-->
+<!--            android:background="@drawable/upload" />-->
+
+
+    <View
+        android:id="@+id/shareImage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:background="@drawable/share" />
 
-        <View
-            android:id="@+id/saveImage"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginRight="50dp"
-            android:background="@drawable/upload" />
-
-
-        <View
-            android:id="@+id/shareImage"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/share2" />
-
-    </LinearLayout>
+<!--    </LinearLayout>-->
 
 </LinearLayout>

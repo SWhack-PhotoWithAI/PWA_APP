@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiConstants {
 
     //==== Base Url
-    public static String BASE_URL = "https://f994e51a7948.ngrok.io/";
+    public static String BASE_URL = "https://426f6f294efe.ngrok.io/";
 
     //==== End point
 
