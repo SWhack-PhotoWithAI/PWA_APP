@@ -39,9 +39,18 @@ def main():
   #이미지 사이즈 및 임계값 설정
 
   THRESHOLD = 0.95
+  
+  
+  device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
+  if torch.cuda.is_available():
+      print("GPU available")
+  else:
+      print("CPU")
+      
 
   #model불러오기
-  model = models.detection.keypointrcnn_resnet50_fpn(pretrained=True).eval()
+  model = models.detection.keypointrcnn_resnet50_fpn(pretrained=True).eval().to(device)
 
   #예시(여기가 카메라-> frame (이미지) 로드 해서 동작)
   imgDir_path = 'images/'
@@ -61,26 +70,26 @@ def main():
       T.ToTensor()
   ])
 
-  input_img = trf(img)
+  input_img = trf(img).to(device)
   out = model([input_img])[0]
 
  
   sen="인물 사진이 아닙니다"
   
   for box, score, keypoints in zip(out['boxes'], out['scores'], out['keypoints']):
-    score = score.detach().numpy()
+    score = score.detach().cpu().numpy()
 
     if score < THRESHOLD:
       continue
 
-    box = box.detach().numpy()
+    box = box.detach().cpu().numpy()
 
     #인물의 정가운데 지점 mid_box로 정의.
     mid_box = 0.5 * (box[0] + box[2])
 
     
     #y축 기준의 알고리즘
-    keypoints = keypoints.detach().numpy()[:, :2]
+    keypoints = keypoints.detach().cpu().numpy()[:, :2]
     temp_face = keypoints[0][1]
     
     
