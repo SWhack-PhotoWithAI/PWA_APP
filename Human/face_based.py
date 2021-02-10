@@ -38,8 +38,16 @@ def main():
 
     THRESHOLD = 0.95
 
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
+    if torch.cuda.is_available():
+      print("GPU available")
+    else:
+      print("CPU")
+      
+    #  True
     #model불러오기
-    model = models.detection.keypointrcnn_resnet50_fpn(pretrained=True).eval()
+    model = models.detection.keypointrcnn_resnet50_fpn(pretrained=True).eval().to(device)
 
     #예시(여기가 카메라-> frame (이미지) 로드 해서 동작)
     # img = Image.open('./ho.jpg')
@@ -55,20 +63,20 @@ def main():
           T.ToTensor()
       ])
 
-      input_img = trf(img)
+      input_img = trf(img).to(device)
       out = model([input_img])[0]
 
       #사진의 최종 점수
       img_score = 0
 
 
-      for box, score, keypoints,keypoints_scores in zip(out['boxes'], out['scores'], out['keypoints'],out['keypoints_scores']):
-          score = score.detach().numpy()
+      for score, keypoints_scores in zip(out['scores'], out['keypoints_scores']):
+          score = score.detach().cpu().numpy()
           
           if score < THRESHOLD:
               continue
           
-          keypoints_scores  = keypoints_scores.detach().numpy()
+          keypoints_scores  = keypoints_scores.detach().cpu().numpy()
           #print(keypoints_scores)
           for i in range(len(keypoints_scores)):
             img_score += keypoints_scores[i]
