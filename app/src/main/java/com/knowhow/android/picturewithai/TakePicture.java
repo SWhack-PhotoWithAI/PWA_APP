@@ -17,6 +17,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
@@ -279,7 +280,8 @@ public class TakePicture extends AppCompatActivity{
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, timeStamp, null);
         return Uri.parse(path);
     }
 
@@ -295,13 +297,21 @@ public class TakePicture extends AppCompatActivity{
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 3;
 
-            Bitmap frontBitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-            saveImage(frontBitmap);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            saveImage(bitmap);
 
+            Matrix matrix = new Matrix();
+            matrix.postRotate(90);
+
+            // We rotate the same Bitmap
+            Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
+
+            //Bitmap rotatedBitmap = rotateImage(frontBitmap, 90);
 
             Intent intent = new Intent(TakePicture.this, BestPicture.class);
 
-            Uri uri = getImageUri(TakePicture.this, frontBitmap);
+            Uri uri = getImageUri(TakePicture.this, rotatedBitmap);
             String ImgPath = FileUtil.getPath(TakePicture.this,uri);
             intent.putExtra("path", String.valueOf(Uri.parse(ImgPath)));
 
@@ -310,6 +320,15 @@ public class TakePicture extends AppCompatActivity{
             startActivity(intent);
 
         });
+    }
+
+
+    private static Bitmap rotateImage(Bitmap img, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
     }
 
 

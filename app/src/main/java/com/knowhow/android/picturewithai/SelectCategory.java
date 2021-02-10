@@ -161,6 +161,9 @@ public class SelectCategory extends AppCompatActivity {
 
 
             list.add(prepareFilePart("image", uri));
+
+            Log.d("test1", String.valueOf(uri));
+            Log.d("test2", String.valueOf(prepareFilePart("image", uri)));
         }
 
         serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);

@@ -114,6 +114,13 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
             //Log.d(TAG, "Error stopping camera preview: " + e.getMessage());
         }
 
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            camera.setDisplayOrientation(90);
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setRotation(90);
+            camera.setParameters(parameters);
+        }
+
         try {
             camera.setPreviewDisplay(holder);
             camera.startPreview();

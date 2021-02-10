@@ -16,8 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="100dp"
         android:lineSpacingExtra="2sp"
-        android:background="@drawable/mainmenu1"
-        />
+        android:background="@drawable/mainmenu1" />
     <View
         android:id="@+id/mainmenu2"
         android:layout_width="264dp"
@@ -26,8 +25,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="300dp"
         android:lineSpacingExtra="2sp"
-        android:background="@drawable/mainmenu2"
-        />
+        android:background="@drawable/mainmenu2" />
     <View
         android:id="@+id/mainmenu3"
         android:layout_width="264dp"
@@ -36,13 +34,11 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="500dp"
         android:lineSpacingExtra="2sp"
-        android:background="@drawable/mainmenu3"
-        />
+        android:background="@drawable/mainmenu3" />
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerInParent="true"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 </RelativeLayout>
