@@ -2,21 +2,29 @@
 
  ### 핵심기능
 
-    기능 1) 사진 구도 가이드 -> 미완성 
+    기능 1) 실시간 사진 구도 가이드 -> 완성 
     기능 2) 비슷한 여러 사진들 중 가장 잘 찍은 사진을 선택해줌 
             2.1) 배경 사진 -> 완성
             2.2) 인물 사진 -> 완성
+    기능 3) 사진 cartoonization -> 완성
+
 
 ### 사용한 AI 모델(pretrained)
     * 사진 구도 가이드 -> keypointrcnn_resnet50_fpn
     * 인물 중심 평가 -> keypointrcnn_resnet50_fpn
     * 배경 중심 평가 -> NIMA: Neural IMage Assessment
     
+    
+### 사용한 Open API 
+    * AInize White-box-Cartoonization 
+    https://ainize.ai/psi1104/White-box-Cartoonization?branch=master
+    
+    
 ### Branch 설명
     * main -> 안드로이드 구현
     * A_1 -> AI모델 튜닝 및 알고리즘 구현
-    * A_2 -> Flask활용 서버로 부터 데이터 받아 코드 실행.
-    * backend -> Backend서버
+    * A_2 -> Flask활용 서버로부터 데이터 받아 코드 실행
+    * backend -> Backend 서버
        
 
 
