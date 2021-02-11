@@ -8,32 +8,14 @@ Original file is located at
 """
 
 import torch
-import torchvision
 from torchvision import models
 import torchvision.transforms as T
-
-import numpy as np
 from PIL import Image
-import matplotlib.pyplot as plt
-from matplotlib.path import Path
-import matplotlib.patches as patches
 
-import glob
-import os
 
-def get_image_list(image_dir):
-    if image_dir is not None:
-        print("Loading images from directory : ", image_dir)
-        images = glob.glob(image_dir + '/*.png')
-        images += glob.glob(image_dir + '/*.jpg')
-        images += glob.glob(image_dir + '/*.jpeg')
 
-    else:
-        raise RuntimeError('Either -img_dir arguments must be passed as argument')
 
-    return images
-
-def main():
+def main(image_list):
   #이미지 사이즈 및 임계값 설정
 
     THRESHOLD = 0.95
@@ -51,12 +33,12 @@ def main():
 
     #예시(여기가 카메라-> frame (이미지) 로드 해서 동작)
     # img = Image.open('./ho.jpg')
-    imgDir_path = 'images/'
+
     _dict = {}
 
-    for img_path in get_image_list(imgDir_path):
-      print('img_path : {}'.format(img_path))
-      img = Image.open(img_path)
+    for image in image_list:
+      print('image : {}'.format(image))
+      img = Image.open(image)
 
       #텐서로 변환
       trf = T.Compose([
@@ -81,11 +63,10 @@ def main():
           for i in range(len(keypoints_scores)):
             img_score += keypoints_scores[i]
 
-      print('removed image : {}'.format(img_path))
-      os.remove(img_path)
+      
       print("img_score : ",img_score)
       
-      _dict[img_path] = img_score
+      _dict[image.filename] = img_score
       
     return _dict
 

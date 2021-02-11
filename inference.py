@@ -1,20 +1,17 @@
 #run Flask WebServer
 
 #Vision Module
-from NIMA.evaluate_NIMA import evaluate
-from Human.face_based import main
-from Human.rt_eval import main as rt_main
-#Flask 
+from NIMA.evaluate_NIMA import evaluate as evaluate_background
+from Human.face_based import main as evaluate_person
+from Human.rt_eval import main as evaluate_person_rt
 
+#Flask 
 from flask_ngrok import run_with_ngrok
-# from flask import Flask
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request
 from flask import send_file
 from werkzeug.utils import secure_filename
 
-import json
 import os
-import shutil
 import requests
 import glob
 
@@ -39,7 +36,7 @@ def initialize():
   else:
     imgDir_path = 'images/'
     img_list = get_image_list(imgDir_path)
-    print(img_list)
+   
     for img_path in img_list:
       os.remove(img_path)
     
@@ -53,24 +50,20 @@ run_with_ngrok(app)   #starts ngrok when the app is run
 @app.route('/predict_background', methods = ['POST'])
 def predict_background(): #image 파일은 post형식으로 넘어오기 때문에
     #제일 score값이 좋은 image name을 return 하면 될듯.
-    
-
+  
     initialize()
-        
+    
     img_dir = 'images/'
     files = request.files.getlist('image') #이미지 여러개 받아오도록 해야함
     order_dict = {}
-    index = 0
 
       
-      
-    for file in files:
+    for idx, file in enumerate(files):
         img_path = img_dir + secure_filename(file.filename)
-        order_dict[img_path] = index
-        index += 1 
+        order_dict[img_path] = idx
         file.save(img_path)
     
-    result = evaluate()
+    result = evaluate_background()
     result_index = order_dict[result['name']]
 
     _dict = {}
@@ -82,24 +75,20 @@ def predict_background(): #image 파일은 post형식으로 넘어오기 때문�
 @app.route('/predict_person', methods = ['POST'])
 def predict_person():
     
-    initialize()
-    
-    img_dir = 'images/'
     files = request.files.getlist('image') #이미지 여러개 받아오도록 해야함
-    
-    order_dict = {}
-    index = 0
-    
-     
-    for file in files:
-        img_path = img_dir + secure_filename(file.filename)
-        order_dict[img_path] = index
-        index += 1
-        file.save(img_path)
 
-    result = main()
+    order_dict = {}
+
+    for idx, file in enumerate(files):
+        order_dict[file.filename] = idx
+
+    
+    result = evaluate_person(files)
+    
     best_img = ''
     max_score = -1
+
+  
     for img_name, score in result.items():
         if score > max_score:
             best_img = img_name
@@ -118,19 +107,13 @@ def predict_person():
 @app.route('/predict_person_rt', methods = ['POST'])
 def predict_person_rt():
     
-    initialize()
+    file = request.files.get('image') # 이미지 한 개 받아옴
     
-    img_dir = 'images/'
-    file = request.files.getlist('image')[0] # 이미지 한 개 받아옴
-    
-   
-    img_path = img_dir + secure_filename(file.filename)
-    file.save(img_path)
-
-    result = rt_main()
+    result = evaluate_person_rt(file)
     
     _dict = {}
     _dict['sen'] = result
+    
     print(result)
     
     return _dict
@@ -142,7 +125,7 @@ def cartoonization():
     
     initialize()
     
-    img_paths = []
+
     img_dir = 'images/'
     file = request.files.get('source') # 이미지 여러개 받아오도록 해야함
     img_path = img_dir + secure_filename(file.filename)

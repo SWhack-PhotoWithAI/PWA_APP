@@ -8,18 +8,10 @@ Original file is located at
 """
 
 import torch
-import torchvision
 from torchvision import models
 import torchvision.transforms as T
-
-import numpy as np
 from PIL import Image
-import matplotlib.pyplot as plt
-from matplotlib.path import Path
-import matplotlib.patches as patches
 
-import glob
-import os
 
 
 
