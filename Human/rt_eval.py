@@ -22,20 +22,8 @@ import glob
 import os
 
 
-def get_image_list(image_dir):
-    if image_dir is not None:
-        print("Loading images from directory : ", image_dir)
-        images = glob.glob(image_dir + '/*.png')
-        images += glob.glob(image_dir + '/*.jpg')
-        images += glob.glob(image_dir + '/*.jpeg')
 
-    else:
-        raise RuntimeError('Either -img_dir arguments must be passed as argument')
-
-    return images
-
-
-def main():
+def main(image):
   #이미지 사이즈 및 임계값 설정
 
   THRESHOLD = 0.95
@@ -53,8 +41,8 @@ def main():
   model = models.detection.keypointrcnn_resnet50_fpn(pretrained=True).eval().to(device)
 
   #예시(여기가 카메라-> frame (이미지) 로드 해서 동작)
-  imgDir_path = 'images/'
-  img = Image.open(get_image_list(imgDir_path)[0])
+
+  img = Image.open(image)
 
   #임의의 thres 정의
   box_thres1 = img.size[0] * 0.45
