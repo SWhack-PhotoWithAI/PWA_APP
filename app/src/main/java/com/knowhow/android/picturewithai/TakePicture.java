@@ -1,14 +1,12 @@
 package com.knowhow.android.picturewithai;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,10 +22,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,16 +40,13 @@ import org.pytorch.Module;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -192,21 +185,20 @@ public class TakePicture extends AppCompatActivity{
 
                         JSONObject jObject = new JSONObject(response.body().string());
                         String message = jObject.getString("sen");
-
-                        Toast toast = Toast.makeText(TakePicture.this, message, Toast.LENGTH_SHORT);
-
-                        TextView textView = new TextView(TakePicture.this);
-                        textView.setBackgroundResource(R.drawable.rounded_corner_rectangle);
-                        textView.setTextColor(Color.WHITE);
-                        textView.setTextSize(20);
-
-                        textView.setPadding(20, 20, 20, 20);
-                        textView.setText(message);
-                        toast.setGravity(Gravity.CENTER, 0, 0);
-                        toast.setView(textView);
-
-
                         if (!stop) {
+                            Toast toast = Toast.makeText(TakePicture.this, message, Toast.LENGTH_SHORT);
+
+                            TextView textView = new TextView(TakePicture.this);
+                            textView.setBackgroundResource(R.drawable.rounded_corner_rectangle);
+                            textView.setTextColor(Color.WHITE);
+                            textView.setTextSize(15);
+
+                            textView.setPadding(20, 20, 20, 20);
+                            textView.setText(message);
+                            toast.setGravity(Gravity.CENTER, 0, 0);
+                            toast.setView(textView);
+
+
                             toast.show();
                             nowBitmap = cameraSurfaceView.nowBitmap;
                             Uri uri = getImageUri(TakePicture.this, nowBitmap);
@@ -359,9 +351,10 @@ public class TakePicture extends AppCompatActivity{
     @Override
     public void onResume(){
         super.onResume();
-        Log.d("resume", "resume");
-        stop=false;
 
+        stop=false;
+        nowBitmap=null;
+        cameraSurfaceView.nowBitmap=null;
         subThread = new SubThread();
         subThread.setDaemon(true);
         subThread.start();  // sub thread 시작

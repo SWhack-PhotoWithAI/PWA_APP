@@ -292,7 +292,7 @@ public class SelectCategory extends AppCompatActivity {
         }
     }
 
-    // 30, 29
+
     public String getImagePathFromUri(Uri uri){
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
         cursor.moveToFirst();
