@@ -23,7 +23,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public SurfaceHolder holder;
     public Camera camera=null;
     public Bitmap nowBitmap=null;
-
+    public Context context;
 
 
     public CameraSurfaceView(Context context) {
@@ -42,6 +42,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     private void init(Context context) {
         holder=getHolder();
         holder.addCallback(this);
+        this.context=context;
     }
 
 
@@ -51,7 +52,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
 
         camera = Camera.open(0);
-
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             camera.setDisplayOrientation(90);
@@ -83,6 +83,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
             camera.setParameters(parameters);
             camera.setPreviewDisplay(holder);
             camera.startPreview();
+
 
 
 

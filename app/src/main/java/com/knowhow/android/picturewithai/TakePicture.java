@@ -1,12 +1,14 @@
 package com.knowhow.android.picturewithai;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -42,13 +44,16 @@ import org.pytorch.Module;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -78,11 +83,8 @@ public class TakePicture extends AppCompatActivity{
     //topthres_2 = img.size[1] * 0.55
     //bottomthres = img.size[1] * 0.9
 
+    public SubThread subThread;
 
-    private SubThread subThread = new SubThread();
-
-
-    private ProgressBar progress;
     public Boolean stop=false;
 
     Module module;
@@ -111,11 +113,6 @@ public class TakePicture extends AppCompatActivity{
         ImageButton button_capture = findViewById(R.id.button);
         button_capture.setOnClickListener(view -> captureFace());
 
-
-        progress = findViewById(R.id.progress) ;
-        subThread.setDaemon(true);
-        subThread.start();  // sub thread 시작
-
         try {
             module = Module.load(assetFilePath(this, "model.pt"));
         } catch (IOException e) {
@@ -123,6 +120,8 @@ public class TakePicture extends AppCompatActivity{
         }
 
     }
+
+
 
     public static String assetFilePath(Context context, String assetName) throws IOException {
         File file = new File(context.getFilesDir(), assetName);
@@ -172,7 +171,6 @@ public class TakePicture extends AppCompatActivity{
 //        } else{
 //            Log.d("looper", "not main thread");
 //        }
-            runOnUiThread(() -> progress.setVisibility(View.VISIBLE));
 
 
             ServiceInterface serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
@@ -188,38 +186,37 @@ public class TakePicture extends AppCompatActivity{
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-
+                    Log.d("stop", String.valueOf(stop));
                     try {
 
-                        runOnUiThread(() -> progress.setVisibility(View.GONE));
-                        Log.d("progress", String.valueOf(stop));
 
-                        if(!stop) {
-                            JSONObject jObject = new JSONObject(response.body().string());
-                            String message = jObject.getString("sen");
+                        JSONObject jObject = new JSONObject(response.body().string());
+                        String message = jObject.getString("sen");
 
-                            Toast toast = Toast.makeText(TakePicture.this,message, Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(TakePicture.this, message, Toast.LENGTH_SHORT);
 
-                            TextView textView = new TextView(TakePicture.this);
-                            textView.setBackgroundResource(R.drawable.rounded_corner_rectangle);
-                            textView.setTextColor(Color.WHITE);
-                            textView.setTextSize(30);
+                        TextView textView = new TextView(TakePicture.this);
+                        textView.setBackgroundResource(R.drawable.rounded_corner_rectangle);
+                        textView.setTextColor(Color.WHITE);
+                        textView.setTextSize(20);
 
-                            textView.setPadding(10, 10, 10, 10);
-                            textView.setText(message);
-                            toast.setGravity(Gravity.CENTER, 0, 0);
-                            toast.setView(textView);
+                        textView.setPadding(20, 20, 20, 20);
+                        textView.setText(message);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.setView(textView);
 
 
+                        if (!stop) {
                             toast.show();
-
                             nowBitmap = cameraSurfaceView.nowBitmap;
                             Uri uri = getImageUri(TakePicture.this, nowBitmap);
 
                             //String ImgPath = FileUtil.getPath(TakePicture.this, uri);
-                            String ImgPath=getImagePathFromUri(uri);
+                            String ImgPath = getImagePathFromUri(uri);
                             analyzeImage(Uri.parse(ImgPath));
                         }
+
+
 
 
                     }
@@ -276,6 +273,7 @@ public class TakePicture extends AppCompatActivity{
 
         cameraSurfaceView.capture((data, camera) -> {
             stop=true;
+            subThread.interrupt();
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inSampleSize = 3;
@@ -293,7 +291,6 @@ public class TakePicture extends AppCompatActivity{
             Intent intent = new Intent(TakePicture.this, BestPicture.class);
 
             Uri uri = getImageUri(TakePicture.this, rotatedBitmap);
-            //String ImgPath = FileUtil.getPath(TakePicture.this,uri);
             String ImgPath=getImagePathFromUri(uri);
             intent.putExtra("path", String.valueOf(Uri.parse(ImgPath)));
 
@@ -352,10 +349,29 @@ public class TakePicture extends AppCompatActivity{
         Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
         cursor.moveToNext();
         String path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
-        Uri uri = Uri.fromFile(new File(path));
 
         cursor.close();
         return path;
     }
 
+
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d("resume", "resume");
+        stop=false;
+
+        subThread = new SubThread();
+        subThread.setDaemon(true);
+        subThread.start();  // sub thread 시작
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        stop=true;
+        subThread.interrupt();
+    }
 }

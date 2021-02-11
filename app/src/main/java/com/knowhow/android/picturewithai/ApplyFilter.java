@@ -93,9 +93,9 @@ public class ApplyFilter extends AppCompatActivity {
                 TextView textView = new TextView(ApplyFilter.this);
                 textView.setBackgroundResource(R.drawable.rounded_corner_rectangle);
                 textView.setTextColor(Color.WHITE);
-                textView.setTextSize(30);
+                textView.setTextSize(20);
 
-                textView.setPadding(10, 10, 10, 10);
+                textView.setPadding(20, 20, 20, 20);
                 textView.setText(getString(R.string.saved));
                 toast.setGravity(Gravity.CENTER, 0, 0);
                 toast.setView(textView);
@@ -255,15 +255,15 @@ public class ApplyFilter extends AppCompatActivity {
     public Uri getImageUri(Context inContext, Bitmap inImage) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-
+        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, timeStamp, null);
         return Uri.parse(path);
     }
 
     private void saveImage(Bitmap frontBitmap) {
 
         String root = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES).toString();
+                Environment.DIRECTORY_DOWNLOADS).toString();
         File myDir = new File(root);
 
         @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
