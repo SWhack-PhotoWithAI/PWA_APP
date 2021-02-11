@@ -103,7 +103,7 @@ public class TakePicture extends AppCompatActivity{
     private ProgressBar progress;
     public Boolean stop=false;
 
-    //Module module;
+    Module module;
 
 
     @Override
@@ -133,11 +133,11 @@ public class TakePicture extends AppCompatActivity{
         subThread.setDaemon(true);
         subThread.start();  // sub thread 시작
 
-//        try {
-//            module = Module.load(assetFilePath(this, "model.pt"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            module = Module.load(assetFilePath(this, "model.pt"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -209,7 +209,7 @@ public class TakePicture extends AppCompatActivity{
                     try {
 
                         runOnUiThread(() -> progress.setVisibility(View.GONE));
-
+                        Log.d("progress", String.valueOf(stop));
 
                         if(!stop) {
                             JSONObject jObject = new JSONObject(response.body().string());

@@ -50,7 +50,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public void surfaceCreated(SurfaceHolder holder) {
 
 
-        Log.d("camera", "created");
         camera = Camera.open(0);
 
 
@@ -79,6 +78,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
 
             parameters.setPictureSize(mSize.width, mSize.height);
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
 
             camera.setParameters(parameters);
             camera.setPreviewDisplay(holder);

@@ -150,6 +150,7 @@ public class ApplyFilter extends AppCompatActivity {
         if (requestCode == REQUEST_EXTERNAL_STORAGE && resultCode == RESULT_OK) {
 
 
+            assert data != null;
             Uri img = data.getData();
 
 
@@ -184,7 +185,6 @@ public class ApplyFilter extends AppCompatActivity {
 
         // MultipartBody.Part is used to send also the actual file name
         return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
-
 
     }
 
