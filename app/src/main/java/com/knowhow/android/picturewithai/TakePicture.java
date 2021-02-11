@@ -1,41 +1,30 @@
 package com.knowhow.android.picturewithai;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.ImageFormat;
 import android.graphics.Matrix;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
-import android.hardware.Camera;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Looper;
-import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +35,6 @@ import com.knowhow.android.picturewithai.remote.ApiConstants;
 import com.knowhow.android.picturewithai.remote.ServiceInterface;
 
 
-import com.knowhow.android.picturewithai.utils.FileUtil;
 
 import org.json.JSONObject;
 import org.pytorch.Module;
@@ -60,9 +48,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -79,14 +65,10 @@ public class TakePicture extends AppCompatActivity{
     private CameraSurfaceView cameraSurfaceView; // 카메라 surfaceview
 
 
-    private ServiceInterface serviceInterface;
-    private ImageButton button_capture;
     private Bitmap nowBitmap=null;
     public Context mContext;
 
-    private static final int PERMISSIONS_REQUEST_CAMERA = 0;
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 0;
-    private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 0;
     private static final double THRESHOLD = 0.95;
     private static final double box_thres1 = 1280 * 0.45;
     private static final double box_thres2 = 1280 * 0.55;
@@ -125,7 +107,8 @@ public class TakePicture extends AppCompatActivity{
             }
 
         }
-        button_capture = findViewById(R.id.button);
+
+        ImageButton button_capture = findViewById(R.id.button);
         button_capture.setOnClickListener(view -> captureFace());
 
 
@@ -177,7 +160,7 @@ public class TakePicture extends AppCompatActivity{
             }
 
             Uri uri = getImageUri(TakePicture.this, nowBitmap);
-            String ImgPath = FileUtil.getPath(TakePicture.this,uri);
+            String ImgPath=getImagePathFromUri(uri);
             analyzeImage(Uri.parse(ImgPath));
         }
 
@@ -192,7 +175,7 @@ public class TakePicture extends AppCompatActivity{
             runOnUiThread(() -> progress.setVisibility(View.VISIBLE));
 
 
-            serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
+            ServiceInterface serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
 
 
             Call<ResponseBody> call = serviceInterface.analyzeImages(prepareFilePart("image", uri));
@@ -233,7 +216,8 @@ public class TakePicture extends AppCompatActivity{
                             nowBitmap = cameraSurfaceView.nowBitmap;
                             Uri uri = getImageUri(TakePicture.this, nowBitmap);
 
-                            String ImgPath = FileUtil.getPath(TakePicture.this, uri);
+                            //String ImgPath = FileUtil.getPath(TakePicture.this, uri);
+                            String ImgPath=getImagePathFromUri(uri);
                             analyzeImage(Uri.parse(ImgPath));
                         }
 
@@ -271,7 +255,6 @@ public class TakePicture extends AppCompatActivity{
             // MultipartBody.Part is used to send also the actual file name
             return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
 
-
         }
     }
 
@@ -298,7 +281,7 @@ public class TakePicture extends AppCompatActivity{
             options.inSampleSize = 3;
 
             Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-            saveImage(bitmap);
+
 
             Matrix matrix = new Matrix();
             matrix.postRotate(90);
@@ -306,13 +289,12 @@ public class TakePicture extends AppCompatActivity{
             // We rotate the same Bitmap
             Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 
-
-            //Bitmap rotatedBitmap = rotateImage(frontBitmap, 90);
-
+            saveImage(rotatedBitmap);
             Intent intent = new Intent(TakePicture.this, BestPicture.class);
 
             Uri uri = getImageUri(TakePicture.this, rotatedBitmap);
-            String ImgPath = FileUtil.getPath(TakePicture.this,uri);
+            //String ImgPath = FileUtil.getPath(TakePicture.this,uri);
+            String ImgPath=getImagePathFromUri(uri);
             intent.putExtra("path", String.valueOf(Uri.parse(ImgPath)));
 
 
@@ -320,15 +302,6 @@ public class TakePicture extends AppCompatActivity{
             startActivity(intent);
 
         });
-    }
-
-
-    private static Bitmap rotateImage(Bitmap img, int degree) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
-        img.recycle();
-        return rotatedImg;
     }
 
 
@@ -370,6 +343,19 @@ public class TakePicture extends AppCompatActivity{
                     }
                 });
 
+    }
+
+    public String getImagePathFromUri(Uri contentUri) {
+
+        String[] proj = { MediaStore.Images.Media.DATA };
+
+        Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+        cursor.moveToNext();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA));
+        Uri uri = Uri.fromFile(new File(path));
+
+        cursor.close();
+        return path;
     }
 
 }

@@ -9,21 +9,16 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
 
-import org.pytorch.Module;
 
 
 public class MainActivity extends AppCompatActivity {
 
-
-    Module module = null;
     private static final int PERMISSIONS_REQUEST_CAMERA = 0;
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 0;
-    private static final int PERMISSIONS_READ_EXTERNAL_STORAGE = 0;
 
 
     @Override
@@ -34,11 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.O) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                Log.d("perm", "test3");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, PERMISSIONS_REQUEST_CAMERA);
             }
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                Log.d("perm", "test4");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_WRITE_EXTERNAL_STORAGE);
             }
 
@@ -53,25 +46,16 @@ public class MainActivity extends AppCompatActivity {
 
 
         View takePicture = findViewById(R.id.mainmenu2);
-        takePicture.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), TakePicture.class);
-                startActivity(intent);
-            }
+        takePicture.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), TakePicture.class);
+            startActivity(intent);
         });
 
         View applyFilter = findViewById(R.id.mainmenu3);
 
-        applyFilter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ApplyFilter.class);
-                startActivity(intent);
-            }
+        applyFilter.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), ApplyFilter.class);
+            startActivity(intent);
         });
-
     }
-
-
 }
