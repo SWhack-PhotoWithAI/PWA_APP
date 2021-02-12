@@ -1,10 +1,18 @@
-# PWA_APP
+# 📸 PictureWithAI 📸
 
-[![PictureWithAI](http://img.youtube.com/vi/h6MuqbK-nLM/0.jpg)](https://youtu.be/h6MuqbK-nLM?t=0s)
+## Click Here 🔽🔽  
+
+
+### [![PictureWithAI](http://img.youtube.com/vi/h6MuqbK-nLM/0.jpg)](https://youtu.be/h6MuqbK-nLM?t=0s)  
+
+#### Youtube: https://www.youtube.com/watch?t=0s&v=h6MuqbK-nLM&feature=youtu.be
+
+***
+
 
 <br/>
 
-### 핵심기능
+### :bulb: 핵심기능 
 
     기능 1) 실시간 사진 구도 가이드 -> 완성 
     기능 2) 비슷한 여러 사진들 중 가장 잘 찍은 사진을 선택해줌 
@@ -13,18 +21,18 @@
     기능 3) 사진 cartoonization -> 완성
 
 
-### 사용한 AI 모델(pretrained)
+### :bulb: 사용한 AI 모델(pretrained)
     * 사진 구도 가이드 -> keypointrcnn_resnet50_fpn
     * 인물 중심 평가 -> keypointrcnn_resnet50_fpn
     * 배경 중심 평가 -> NIMA: Neural IMage Assessment
     
     
-### 사용한 Open API 
+### :bulb: 사용한 Open API 
     * AInize White-box-Cartoonization 
     https://ainize.ai/psi1104/White-box-Cartoonization?branch=master
     
     
-### Branch 설명
+### :bulb: Branch 설명
     * main -> 안드로이드 구현
     * A_1 -> AI모델 튜닝 및 알고리즘 구현
     * A_2 -> Flask활용 서버로부터 데이터 받아 코드 실행
@@ -36,10 +44,10 @@
 
 
 
-# 개발일지 (해커톤 기간 2/4 ~ 2/6)  
+# 👩‍💻 개발일지 👨‍💻   (해커톤 기간 2/4 ~ 2/6)  
 </br>
 
-## [2/4]
+## ⏱ [2/4]
 
 ### 1. 작업방향(기능 구체화)
 
@@ -77,7 +85,7 @@
 
 <br/><br/>
 
-## [2/5 pm 01:00]
+## ⏱ [2/5 pm 01:00]
 
 ### 1. 기능 상세화
     * 기능 1) AI 카메라 (take a photo with AI)
@@ -95,7 +103,7 @@
     
 <br/><br/>
 
-## [2/5 pm 11:00]
+## ⏱ [2/5 pm 11:00]
 
 ### 작업 진행상황
     * AI 
@@ -120,19 +128,19 @@
    
 <br/><br/><br/>
 
-# NOW (해커톤 기간 이후)
+# 💁‍♀️ NOW (해커톤 기간 이후)
 <br/><br/>
 
-### 1. 기능 추가
+### ✔️ 기능 추가
 
     * 실시간 카메라 프레임을 받아와서 사진 구도에 대한 가이드 제공
     * 사진 cartoonize (convert image into a cartoon style)
 
-### 2. 코드 리팩토링
+### ✔️ 코드 리팩토링
 
-### 3. 다양한 버그 수정
+### ✔️ 다양한 버그 수정
 
-### 4. 속도 향상 
+### ✔️ 속도 향상 
     * GPU 사용
     * multi threading
     
