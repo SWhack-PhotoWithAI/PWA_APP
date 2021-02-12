@@ -29,13 +29,11 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     public CameraSurfaceView(Context context) {
         super(context);
         init(context);
-
     }
 
     public CameraSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
-
     }
 
 
@@ -91,10 +89,6 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
             e.printStackTrace();
         }
     }
-
-
-
-
 
 
 

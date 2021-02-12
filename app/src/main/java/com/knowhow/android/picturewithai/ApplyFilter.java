@@ -52,6 +52,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+
 public class ApplyFilter extends AppCompatActivity {
 
     private static final int REQUEST_EXTERNAL_STORAGE = 100;
@@ -112,7 +113,6 @@ public class ApplyFilter extends AppCompatActivity {
 
             if (resultUri!=null) {
 
-
                 Intent intent = new Intent(Intent.ACTION_SEND);
 
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -164,40 +164,6 @@ public class ApplyFilter extends AppCompatActivity {
         }
     }
 
-
-    public String getImagePathFromUri(Uri uri){
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        String document_id = cursor.getString(0);
-        document_id = document_id.substring(document_id.lastIndexOf(":")+1);
-        cursor.close();
-
-        cursor = getContentResolver().query(
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
-        cursor.moveToFirst();
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-        cursor.close();
-
-        return path;
-    }
-
-    @NonNull
-    private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
-
-        File file = new File(fileUri.getPath());
-        Log.i("here is error",file.getAbsolutePath());
-        // create RequestBody instance from file
-
-        RequestBody requestFile =
-                RequestBody.create(
-                        MediaType.parse("image/*"),
-                        file);
-
-        // MultipartBody.Part is used to send also the actual file name
-        return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
-
-    }
 
 
     //===== Upload files to server
@@ -251,6 +217,8 @@ public class ApplyFilter extends AppCompatActivity {
         });
     }
 
+
+
     public Uri getImageUri(Context inContext, Bitmap bitmap) {
 
         File cachePath = new File(inContext.getCacheDir(), "images");
@@ -276,6 +244,43 @@ public class ApplyFilter extends AppCompatActivity {
         Uri contentUri = FileProvider.getUriForFile(inContext, "com.knowhow.android.picturewithai.fileprovider", newFile);
 
         return contentUri;
+    }
+
+
+    public String getImagePathFromUri(Uri uri){
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        String document_id = cursor.getString(0);
+        document_id = document_id.substring(document_id.lastIndexOf(":")+1);
+        cursor.close();
+
+        cursor = getContentResolver().query(
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
+        cursor.moveToFirst();
+        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        cursor.close();
+
+        return path;
+    }
+
+
+
+    @NonNull
+    private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
+
+        File file = new File(fileUri.getPath());
+        Log.i("here is error",file.getAbsolutePath());
+        // create RequestBody instance from file
+
+        RequestBody requestFile =
+                RequestBody.create(
+                        MediaType.parse("image/*"),
+                        file);
+
+        // MultipartBody.Part is used to send also the actual file name
+        return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
+
     }
 
 

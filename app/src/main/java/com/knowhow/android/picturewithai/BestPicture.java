@@ -17,7 +17,7 @@ import android.widget.ImageView;
 
 public class BestPicture extends AppCompatActivity {
 
-    View saveImage, shareImage;
+    View shareImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,42 +36,13 @@ public class BestPicture extends AppCompatActivity {
 
             view.setImageBitmap(bitmap);
 
-            //saveImage = findViewById(R.id.saveImage);
             shareImage = findViewById(R.id.shareImage);
-
-//            saveImage.setOnClickListener(v -> {
-//
-//                Toast toast = Toast.makeText(BestPicture.this,"Completely Saved!", Toast.LENGTH_SHORT);
-//
-//                TextView textView = new TextView(BestPicture.this);
-//                textView.setBackgroundResource(R.drawable.rounded_corner_rectangle);
-//                textView.setTextColor(Color.WHITE);
-//                textView.setTextSize(30);
-//
-//                textView.setPadding(10, 10, 10, 10);
-//                textView.setText(getString(R.string.saved));
-//                toast.setGravity(Gravity.CENTER, 0, 0);
-//                toast.setView(textView);
-//
-//
-//                toast.show();
-//
-//                saveImage(bitmap);
-//
-//
-//            });
-
-
             shareImage.setOnClickListener(v -> {
 
                 Intent intent = new Intent(Intent.ACTION_SEND);
-
                 Uri uri = getUriFromPath(path);
-
                 intent.setType("image/*");
-
                 intent.putExtra(Intent.EXTRA_STREAM, uri);
-
                 Intent Sharing = Intent.createChooser(intent, "Share to");
                 startActivity(Sharing);
             });

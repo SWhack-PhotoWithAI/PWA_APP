@@ -8,8 +8,6 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,8 +22,6 @@ import com.knowhow.android.picturewithai.remote.ServiceInterface;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +57,8 @@ public class SelectCategory extends AppCompatActivity {
         progress = findViewById(R.id.progress);
 
 
-        View personimage = findViewById(R.id.personImage);
-        personimage.setOnClickListener(v -> {
+        View personImage = findViewById(R.id.personImage);
+        personImage.setOnClickListener(v -> {
 
             launchGalleryIntent();
             type="Person";
@@ -70,8 +66,8 @@ public class SelectCategory extends AppCompatActivity {
         });
 
 
-        View sightimage = findViewById(R.id.sightImage);
-        sightimage.setOnClickListener(v -> {
+        View sightImage = findViewById(R.id.sightImage);
+        sightImage.setOnClickListener(v -> {
 
             launchGalleryIntent();
             type="Background";
@@ -203,6 +199,52 @@ public class SelectCategory extends AppCompatActivity {
     }
 
 
+
+    public void launchGalleryIntent() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_EXTERNAL_STORAGE);
+    }
+
+
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_EXTERNAL_STORAGE && resultCode == RESULT_OK) {
+
+            ClipData clipData = data.getClipData();
+
+
+            if (clipData != null) {
+                //multiple images selecetd
+                for (int i = 0; i < clipData.getItemCount(); i++) {
+                    Uri img = clipData.getItemAt(i).getUri();
+                    String imgPath = getImagePathFromUri(img);
+                    files.add(Uri.parse(imgPath));
+                }
+
+            } else {
+                //single image selected
+                Uri img = data.getData();
+                String imgPath = getImagePathFromUri(img);
+                files.add(Uri.parse(imgPath));
+
+            }
+
+            if (type.equals("Background")) {
+                predictBackground();
+            }else {
+                predictPerson();
+            }
+
+        }
+    }
+
+
     @NonNull
     private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
 
@@ -218,76 +260,6 @@ public class SelectCategory extends AppCompatActivity {
         return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
     }
 
-
-    public void launchGalleryIntent() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-
-        intent.setType("image/*");
-        startActivityForResult(intent, REQUEST_EXTERNAL_STORAGE);
-    }
-
-
-
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_EXTERNAL_STORAGE && resultCode == RESULT_OK) {
-
-
-            final List<Bitmap> bitmaps = new ArrayList<>();
-            ClipData clipData = data.getClipData();
-
-
-
-            if (clipData != null) {
-                //multiple images selecetd
-                for (int i = 0; i < clipData.getItemCount(); i++) {
-                    Uri img = clipData.getItemAt(i).getUri();
-
-                    String imgPath = getImagePathFromUri(img);
-
-                    files.add(Uri.parse(imgPath));
-
-
-                    try {
-                        InputStream inputStream = getContentResolver().openInputStream(img);
-                        Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                        bitmaps.add(bitmap);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            } else {
-                //single image selected
-
-                Uri img = data.getData();
-
-                String imgPath = getImagePathFromUri(img);
-                files.add(Uri.parse(imgPath));
-
-
-                try {
-                    InputStream inputStream = getContentResolver().openInputStream(img);
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    bitmaps.add(bitmap);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            if (type.equals("Background")) {
-                predictBackground();
-            }else {
-                predictPerson();
-            }
-
-        }
-    }
 
 
     public String getImagePathFromUri(Uri uri){

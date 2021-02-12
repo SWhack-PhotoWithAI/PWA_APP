@@ -13,8 +13,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 
-
-
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSIONS_REQUEST_CAMERA = 0;
@@ -50,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), TakePicture.class);
             startActivity(intent);
         });
+
 
         View applyFilter = findViewById(R.id.mainmenu3);
 
