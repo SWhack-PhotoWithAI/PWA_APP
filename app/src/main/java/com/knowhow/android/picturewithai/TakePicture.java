@@ -1,6 +1,5 @@
 package com.knowhow.android.picturewithai;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -40,6 +39,7 @@ import org.pytorch.Module;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import java.io.IOException;
@@ -151,25 +151,25 @@ public class TakePicture extends AppCompatActivity{
                 nowBitmap=cameraSurfaceView.nowBitmap;
             }
 
-            Uri uri = getImageUri(TakePicture.this, nowBitmap);
-            String ImgPath=getImagePathFromUri(uri);
-            analyzeImage(Uri.parse(ImgPath));
+            analyzeImage(nowBitmap);
         }
 
 
-        public void analyzeImage(Uri uri){
+        public void analyzeImage(Bitmap bitmap){
 
 //        if (Looper.myLooper() == Looper.getMainLooper()){
 //            Log.d("looper", "main thread");
 //        } else{
 //            Log.d("looper", "not main thread");
 //        }
-
+            File file=convertBitmapToFile(bitmap);
+            RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), file);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), reqFile);
 
             ServiceInterface serviceInterface = ApiConstants.getClient().create(ServiceInterface.class);
 
 
-            Call<ResponseBody> call = serviceInterface.analyzeImages(prepareFilePart("image", uri));
+            Call<ResponseBody> call = serviceInterface.analyzeImages(body);
 
 
             call.enqueue(new Callback<ResponseBody>() {
@@ -179,7 +179,6 @@ public class TakePicture extends AppCompatActivity{
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-                    Log.d("stop", String.valueOf(stop));
                     try {
 
 
@@ -201,15 +200,9 @@ public class TakePicture extends AppCompatActivity{
 
                             toast.show();
                             nowBitmap = cameraSurfaceView.nowBitmap;
-                            Uri uri = getImageUri(TakePicture.this, nowBitmap);
 
-                            //String ImgPath = FileUtil.getPath(TakePicture.this, uri);
-                            String ImgPath = getImagePathFromUri(uri);
-                            analyzeImage(Uri.parse(ImgPath));
+                            analyzeImage(nowBitmap);
                         }
-
-
-
 
                     }
                     catch (Exception e){
@@ -224,26 +217,8 @@ public class TakePicture extends AppCompatActivity{
 
                     Log.i("my",t.getMessage());
 
-
                 }
             });
-        }
-
-        @NonNull
-        private MultipartBody.Part prepareFilePart(String partName, Uri fileUri) {
-
-            File file = new File(fileUri.getPath());
-            Log.i("here is error",file.getAbsolutePath());
-            // create RequestBody instance from file
-
-            RequestBody requestFile =
-                    RequestBody.create(
-                            MediaType.parse("image/*"),
-                            file);
-
-            // MultipartBody.Part is used to send also the actual file name
-            return MultipartBody.Part.createFormData(partName, file.getName(), requestFile);
-
         }
     }
 
@@ -280,6 +255,22 @@ public class TakePicture extends AppCompatActivity{
             Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 
             saveImage(rotatedBitmap);
+
+            Toast toast = Toast.makeText(TakePicture.this,"Completely Saved!", Toast.LENGTH_SHORT);
+
+            TextView textView = new TextView(TakePicture.this);
+            textView.setBackgroundResource(R.drawable.rounded_corner_rectangle);
+            textView.setTextColor(Color.WHITE);
+            textView.setTextSize(20);
+
+            textView.setPadding(20, 20, 20, 20);
+            textView.setText(getString(R.string.saved));
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.setView(textView);
+
+
+            toast.show();
+
             Intent intent = new Intent(TakePicture.this, BestPicture.class);
 
             Uri uri = getImageUri(TakePicture.this, rotatedBitmap);
@@ -299,7 +290,7 @@ public class TakePicture extends AppCompatActivity{
     private void saveImage(Bitmap frontBitmap) {
 
         String root = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES).toString();
+                Environment.DIRECTORY_DOCUMENTS).toString();
         File myDir = new File(root);
 
         @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -344,6 +335,40 @@ public class TakePicture extends AppCompatActivity{
 
         cursor.close();
         return path;
+    }
+
+    private File convertBitmapToFile(Bitmap bitmap) {
+
+        //create a file to write bitmap data
+        File file = new File(this.getCacheDir(), "nowFrame");
+
+
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100 /*ignored for PNG*/, bos);
+        byte[] bitmapdata = bos.toByteArray();
+
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            fos.write(bitmapdata);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 
 

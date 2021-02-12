@@ -286,9 +286,6 @@ public class SelectCategory extends AppCompatActivity {
                 predictPerson();
             }
 
-
-
-
         }
     }
 

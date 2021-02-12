@@ -38,13 +38,10 @@ public class Initial extends AppCompatActivity {
         }
 
 
-        RelativeLayout app_layer = (RelativeLayout) findViewById (R.id.cover);
-        app_layer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }
+        RelativeLayout app_layer = findViewById (R.id.cover);
+        app_layer.setOnClickListener(v -> {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
         });
     }
 }
