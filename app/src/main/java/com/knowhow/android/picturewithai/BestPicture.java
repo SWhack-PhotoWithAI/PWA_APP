@@ -76,7 +76,6 @@ public class BestPicture extends AppCompatActivity {
                 startActivity(Sharing);
             });
 
-
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -33,10 +34,10 @@ import com.knowhow.android.picturewithai.remote.ApiConstants;
 import com.knowhow.android.picturewithai.remote.ServiceInterface;
 
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -114,9 +115,8 @@ public class ApplyFilter extends AppCompatActivity {
 
                 Intent intent = new Intent(Intent.ACTION_SEND);
 
-
-                intent.setType("image/*");
-
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.setDataAndType(resultUri, getContentResolver().getType(resultUri));
                 intent.putExtra(Intent.EXTRA_STREAM, resultUri);
 
                 Intent Sharing = Intent.createChooser(intent, "Share to");
@@ -226,6 +226,7 @@ public class ApplyFilter extends AppCompatActivity {
 
                     File downloadedFile = new File(getFilesDir(), "cartoon.jpg");
                     BufferedSink sink = Okio.buffer(Okio.sink(downloadedFile));
+                    assert response.body() != null;
                     sink.writeAll(response.body().source());
                     sink.close();
                     String filePath = downloadedFile.getPath();
@@ -239,8 +240,6 @@ public class ApplyFilter extends AppCompatActivity {
                     Log.d("Exception","|=>"+e.getMessage());
 
                 }
-
-
             }
 
             @Override
@@ -252,13 +251,34 @@ public class ApplyFilter extends AppCompatActivity {
         });
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, timeStamp, null);
-        return Uri.parse(path);
+    public Uri getImageUri(Context inContext, Bitmap bitmap) {
+
+        File cachePath = new File(inContext.getCacheDir(), "images");
+        cachePath.mkdirs(); // don't forget to make the directory
+        FileOutputStream stream = null; // overwrites this image every time
+
+        try {
+            stream = new FileOutputStream(cachePath + "/image.png");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+
+        try {
+            stream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        File imagePath = new File(inContext.getCacheDir(), "images");
+        File newFile = new File(imagePath, "image.png");
+        Uri contentUri = FileProvider.getUriForFile(inContext, "com.knowhow.android.picturewithai.fileprovider", newFile);
+
+        return contentUri;
     }
+
+
 
     private void saveImage(Bitmap frontBitmap) {
 

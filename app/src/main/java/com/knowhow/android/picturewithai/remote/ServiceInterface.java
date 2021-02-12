@@ -31,6 +31,5 @@ public interface ServiceInterface {
     @POST("cartoonization")
     Call<ResponseBody> applyFilter(@Part MultipartBody.Part file);
 
-
 }
 
