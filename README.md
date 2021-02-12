@@ -5,7 +5,7 @@
 
 ### [![PictureWithAI](http://img.youtube.com/vi/h6MuqbK-nLM/0.jpg)](https://youtu.be/h6MuqbK-nLM?t=0s)  
 
-#### Youtube: https://www.youtube.com/watch?t=0s&v=h6MuqbK-nLM&feature=youtu.be
+#### Youtube: https://www.youtube.com/watch?v=h6MuqbK-nLM
 
 ***
 
