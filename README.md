@@ -28,14 +28,13 @@
 <br/>
 
 
+
 ### :bulb: 핵심기능
     기능 1) 실시간 사진 구도 가이드 
     기능 2) 비슷한 여러 사진들 중 가장 잘 찍은 사진 
         2.1) 배경 사진 
         2.2) 인물 사진
     기능 3) 사진 cartoonization
-
-
 
 ### :bulb: 사용한 AI 모델(pretrained)
     * 사진 구도 가이드 -> keypointrcnn_resnet50_fpn
